@@ -17,6 +17,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>12</maven.compiler.release>
+        <surefire.version>2.22.2</surefire.version>
+        <compiler.version>3.8.1</compiler.version>
     </properties>
 
     <dependencies>
@@ -55,11 +57,19 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>${compiler.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>${surefire.version}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <surefire.version>${surefire.version}</surefire.version>
+                            <compiler.version>${compiler.version}</compiler.version>
+                            <maven.home>${maven.home}</maven.home>
+                            <!--            <buildDirectory>${project.build.directory}</buildDirectory>-->
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>

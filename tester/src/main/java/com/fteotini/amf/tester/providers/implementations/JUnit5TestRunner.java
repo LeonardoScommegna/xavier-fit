@@ -5,64 +5,62 @@ import com.fteotini.amf.tester.TestRunner;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-import static org.junit.platform.engine.discovery.ClassNameFilter.*;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
-import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.Set;
+import java.util.function.Supplier;
 
-import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
+import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 
-public class JUnit5TestRunner implements TestRunner {
+class JUnit5TestRunner implements TestRunner {
+    private final Set<Path> additionalClassPaths;
     private final Launcher launcher;
 
-    public JUnit5TestRunner(Launcher launcher) {
-        this.launcher = launcher;
+    JUnit5TestRunner(Set<Path> additionalClassPaths, Supplier<Launcher> launcherFactory) {
+        this.additionalClassPaths = additionalClassPaths;
+        launcher = launcherFactory.get();
+    }
+
+    public JUnit5TestRunner(Set<Path> additionalClassPaths) {
+        this(additionalClassPaths, LauncherFactory::create);
     }
 
     @Override
-    public SuiteOutcome runEntireSuite(String classPathResource) {
+    public SuiteOutcome runEntireSuite() {
         var originalClassLoader = Thread.currentThread().getContextClassLoader();
-        var ccc = originalClassLoader.getResource(classPathResource);
-        var newClassLoader = URLClassLoader.newInstance(new URL[]{ccc},originalClassLoader);
+        var url = additionalClassPaths.stream().map(JUnit5TestRunner::ToURL).toArray(URL[]::new);
+        var newClassLoader = URLClassLoader.newInstance(url, originalClassLoader);
 
 //        var f = new Directory(classPathResource);
         try {
-            //Thread.currentThread().setContextClassLoader(newClassLoader);
+            Thread.currentThread().setContextClassLoader(newClassLoader);
 
             var discover = LauncherDiscoveryRequestBuilder.request()
-        .selectors(
-//                selectClasspathRoots(Collections.singleton(convertClassPathToUri(ccc)))
-                //selectClasspathResource(ccc.toString())
-    //            selectPackage("com.fteotini.amf.tester.dummyProject")
-                selectUri(ccc.toString())
-        )
+                    .selectors(selectClasspathRoots(additionalClassPaths))
                     .filters(includeClassNamePatterns(".*Test"))
-        .build();
-
+                    .build();
 
             var res = new SummaryGeneratingListener();
-
             launcher.registerTestExecutionListeners(res);
+
             var plan = launcher.discover(discover);
 
             launcher.execute(plan);
             return null;
         } finally {
-           Thread.currentThread().setContextClassLoader(originalClassLoader);
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
 
-    private static Path convertClassPathToUri(URL classPathResource) {
+    private static URL ToURL(Path path) {
         try {
-            return Path.of(classPathResource.toURI());
-        } catch (URISyntaxException e) {
+            return path.toUri().toURL();
+        } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
