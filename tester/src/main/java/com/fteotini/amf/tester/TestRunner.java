@@ -1,7 +1,10 @@
 package com.fteotini.amf.tester;
 
-import java.net.URISyntaxException;
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
 public interface TestRunner {
-    SuiteOutcome runEntireSuite() throws URISyntaxException;
+    TestSuiteOutcome runEntireSuite();
+
+    <T> TestMethodOutcome runSingleMethod(Class<T> clazz, Function<T, Method> methodSelector);
 }

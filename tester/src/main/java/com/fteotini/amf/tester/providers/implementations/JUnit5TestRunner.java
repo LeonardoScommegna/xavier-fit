@@ -1,17 +1,20 @@
 package com.fteotini.amf.tester.providers.implementations;
 
-import com.fteotini.amf.tester.SuiteOutcome;
+import com.fteotini.amf.tester.TestMethodOutcome;
 import com.fteotini.amf.tester.TestRunner;
+import com.fteotini.amf.tester.TestSuiteOutcome;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
@@ -31,8 +34,8 @@ class JUnit5TestRunner implements TestRunner {
     }
 
     @Override
-    public SuiteOutcome runEntireSuite() {
-        var originalClassLoader = Thread.currentThread().getContextClassLoader();
+    public TestSuiteOutcome runEntireSuite() {
+        var originalClassLoader = getDefaultClassLoader();
         var url = additionalClassPaths.stream().map(JUnit5TestRunner::ToURL).toArray(URL[]::new);
         var newClassLoader = URLClassLoader.newInstance(url, originalClassLoader);
 
@@ -55,6 +58,11 @@ class JUnit5TestRunner implements TestRunner {
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+    }
+
+    @Override
+    public <T> TestMethodOutcome runSingleMethod(Class<T> clazz, Function<T, Method> methodSelector) {
+        return null;
     }
 
     private static URL ToURL(Path path) {

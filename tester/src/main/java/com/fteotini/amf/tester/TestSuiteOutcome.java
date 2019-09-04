@@ -1,4 +1,4 @@
 package com.fteotini.amf.tester;
 
-public class SuiteOutcome {
+public class TestSuiteOutcome {
 }
