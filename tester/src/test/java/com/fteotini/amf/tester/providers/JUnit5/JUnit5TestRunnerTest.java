@@ -1,4 +1,4 @@
-package com.fteotini.amf.tester.providers.implementations;
+package com.fteotini.amf.tester.providers.JUnit5;
 
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
