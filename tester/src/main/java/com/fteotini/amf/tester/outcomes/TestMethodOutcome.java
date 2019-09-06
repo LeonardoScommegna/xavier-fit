@@ -17,7 +17,7 @@ public class TestMethodOutcome extends TestOutcomeBase<Method> {
     }
 
     public static TestMethodOutcome Skipped(Method testMethod, String skipReason){
-        return new TestMethodOutcome(testMethod,TestResult.Failure, skipReason, null);
+        return new TestMethodOutcome(testMethod,TestResult.Skipped, skipReason, null);
     }
 
     public Method getTestMethod() {
