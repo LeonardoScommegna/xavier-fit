@@ -10,16 +10,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 class TestNode {
     final Queue<TestNode> children = new ConcurrentLinkedQueue<>();
 
-    private final String skipReason;
+    private String skipReason;
     private final TestIdentifier identifier;
     private TestExecutionResult result;
 
     TestNode(TestIdentifier identifier) {
-        this(identifier,null);
-    }
-
-    TestNode(TestIdentifier identifier, String skipReason) {
-        this.skipReason = skipReason;
         this.identifier = identifier;
     }
 
@@ -41,5 +36,9 @@ class TestNode {
 
     public Optional<String> getSkipReason() {
         return Optional.ofNullable(skipReason);
+    }
+
+    public void setSkipReason(String skipReason) {
+        this.skipReason = skipReason;
     }
 }

@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
@@ -18,7 +21,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +71,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
     }
 
     @Test
-    void Given_a_finished_execution_then_it_should_delegate_to_the_builder_and_return_its_result() {
+    void Given_a_finished_execution_then_it_should_return_the_builder_result() {
         var expected = mock(TestSuiteOutcome.class);
         when(builder.build(any())).thenReturn(expected);
 
@@ -89,7 +94,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
     }
 
     @Test
-    void Given_a_test_identifier_without_parent_then_its_representation_should_be_appended_to_the_root() throws Exception{
+    void Given_a_test_identifier_without_parent_then_its_representation_should_be_appended_to_the_root() throws Exception {
         var testIdentifier = TestIdentifier.from(dummyTestMethodDescriptor());
         var sut = finishedSut(s -> s.executionStarted(testIdentifier));
 
@@ -104,6 +109,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
                 .isEqualTo(new TestNode(testIdentifier));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     void Given_a_test_identifier_with_parent_then_it_should_build_the_correct_structure() throws NoSuchMethodException {
         var parent = dummyTestClassDescriptor();
@@ -124,14 +130,70 @@ class TestSuiteOutcomeGeneratingListenerTest {
         assertThat(arg.children).hasSize(1);
 
         var firstLevelChild = arg.children.peek();
-        //noinspection ConstantConditions
         assertThat(firstLevelChild.getIdentifier()).contains(parentIdentifier);
         assertThat(firstLevelChild.children).hasSize(1);
 
         var secondLevelChild = firstLevelChild.children.peek();
-        //noinspection ConstantConditions
         assertThat(secondLevelChild.getIdentifier()).contains(childIdentifier);
         assertThat(secondLevelChild.children).isEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource("availableTestResults")
+    void Given_a_test_then_marking_it_as_finished_should_edit_the_corresponding_node(TestExecutionResult result) throws NoSuchMethodException {
+        var test = TestIdentifier.from(dummyTestMethodDescriptor());
+
+        var sut = finishedSut(s -> {
+            s.executionStarted(test);
+            s.executionFinished(test, result);
+        });
+        sut.generateTestSuiteOutcome();
+
+        verify(builder).build(rootTestNodeCaptor.capture());
+        //noinspection ConstantConditions
+        assertThat(rootTestNodeCaptor.getValue().children.peek().getResult()).contains(result);
+    }
+
+    @Test
+    void Given_a_test_then_marking_it_as_skipped_should_set_the_correct_properties_on_its_node() throws NoSuchMethodException {
+        var test = TestIdentifier.from(dummyTestMethodDescriptor());
+
+        var sut = finishedSut(s -> {
+            s.executionStarted(test);
+            s.executionSkipped(test, "Reason");
+        });
+        sut.generateTestSuiteOutcome();
+
+        verify(builder).build(rootTestNodeCaptor.capture());
+
+        var children = rootTestNodeCaptor.getValue().children;
+        assertThat(children).hasSize(1);
+        //noinspection ConstantConditions
+        assertThat(children.peek().getSkipReason()).contains("Reason");
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    void Given_a_not_started_test_then_calling_executionSkipped_should_create_the_node() throws NoSuchMethodException {
+        var test = TestIdentifier.from(dummyTestMethodDescriptor());
+
+        var sut = finishedSut(s -> {
+            s.executionSkipped(test, "Reason");
+        });
+        sut.generateTestSuiteOutcome();
+
+        verify(builder).build(rootTestNodeCaptor.capture());
+
+        var children = rootTestNodeCaptor.getValue().children;
+        assertThat(children).hasSize(1);
+
+        var skippedTest = children.peek();
+        assertThat(skippedTest.getSkipReason()).contains("Reason");
+        assertThat(skippedTest.getIdentifier()).contains(test);
+    }
+
+    private static Collection<TestExecutionResult> availableTestResults() {
+        return Set.of(TestExecutionResult.successful(),TestExecutionResult.aborted(new RuntimeException()));
     }
 
     private TestSuiteOutcomeGeneratingListener notStartedSut() {
@@ -155,7 +217,8 @@ class TestSuiteOutcomeGeneratingListenerTest {
     }
 
     private TestSuiteOutcomeGeneratingListener finishedSut() {
-        return finishedSut(noop -> {});
+        return finishedSut(noop -> {
+        });
     }
 
     private TestDescriptor dummyTestClassDescriptor() {
@@ -173,7 +236,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
     private TestDescriptor dummyTestMethodDescriptor(TestDescriptor parent) throws NoSuchMethodException {
         var parentID = parent != null ? parent.getUniqueId() : EngineId;
         var descriptor = new TestMethodTestDescriptor(
-                parentID.append("method","dummyTestMethod"),
+                parentID.append("method", "dummyTestMethod"),
                 DummyTestClass.class,
                 DummyTestClass.class.getDeclaredMethod("dummyTestMethod"),
                 dummyConfig
@@ -186,8 +249,9 @@ class TestSuiteOutcomeGeneratingListenerTest {
         return descriptor;
     }
 
-    static class DummyTestClass{
-        void dummyTestMethod(){}
+    static class DummyTestClass {
+        void dummyTestMethod() {
+        }
     }
 }
 

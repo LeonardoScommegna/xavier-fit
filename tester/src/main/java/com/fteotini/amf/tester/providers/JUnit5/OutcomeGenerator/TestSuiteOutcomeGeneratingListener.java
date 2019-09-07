@@ -3,6 +3,7 @@ package com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator;
 import com.fteotini.amf.tester.outcomes.TestSuiteOutcome;
 import com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator.exceptions.TestSuiteNotFinishedYetException;
 import com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator.exceptions.TestSuiteNotStartedYetException;
+import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
@@ -32,23 +33,11 @@ public class TestSuiteOutcomeGeneratingListener implements TestExecutionListener
         return builder.build(root);
     }
 
-    /**
-     * Called when the execution of the {@link TestPlan} has started,
-     * <em>before</em> any test has been executed.
-     *
-     * @param testPlan describes the tree of tests about to be executed
-     */
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {
         isStarted = true;
     }
 
-    /**
-     * Called when the execution of the {@link TestPlan} has finished,
-     * <em>after</em> all tests have been executed.
-     *
-     * @param testPlan describes the tree of tests that have been executed
-     */
     @Override
     public void testPlanExecutionFinished(TestPlan testPlan) {
         if (!isStarted) {
@@ -57,26 +46,35 @@ public class TestSuiteOutcomeGeneratingListener implements TestExecutionListener
         isFinished = true;
     }
 
-    /**
-     * Called when the execution of a leaf or subtree of the {@link TestPlan}
-     * is about to be started.
-     *
-     * <p>The {@link TestIdentifier} may represent a test or a container.
-     *
-     * <p>This method will only be called if the test or container has not
-     * been {@linkplain #executionSkipped skipped}.
-     *
-     * <p>This method will be called for a container {@code TestIdentifier}
-     * <em>before</em> {@linkplain #executionStarted starting} or
-     * {@linkplain #executionSkipped skipping} any of its children.
-     *
-     * @param testIdentifier the identifier of the started test or container
-     */
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
         var node = new TestNode(testIdentifier);
-        testsNodesByUniqueId.put(testIdentifier.getUniqueId(),node);
 
+        addNode(testIdentifier, node);
+    }
+
+    private void addNode(TestIdentifier testIdentifier, TestNode node) {
+        testsNodesByUniqueId.put(testIdentifier.getUniqueId(),node);
         testIdentifier.getParentId().map(testsNodesByUniqueId::get).orElse(root).addChild(node);
+    }
+
+    @Override
+    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+        getTestNodeByIdentifier(testIdentifier).setResult(testExecutionResult);
+    }
+
+    @Override
+    public void executionSkipped(TestIdentifier testIdentifier, String reason) {
+        var node = getTestNodeByIdentifier(testIdentifier);
+        if (node == null) {
+            node = new TestNode(testIdentifier);
+            addNode(testIdentifier,node);
+        }
+
+        node.setSkipReason(reason);
+    }
+
+    private TestNode getTestNodeByIdentifier(TestIdentifier testIdentifier) {
+        return testsNodesByUniqueId.get(testIdentifier.getUniqueId());
     }
 }
