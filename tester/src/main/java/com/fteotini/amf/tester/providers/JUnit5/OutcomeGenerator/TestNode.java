@@ -29,8 +29,9 @@ class TestNode {
         return new TestNode();
     }
 
-    void addChild(TestNode child){
+    TestNode addChild(TestNode child){
         children.add(child);
+        return this;
     }
 
     Optional<TestExecutionResult> getResult() {
