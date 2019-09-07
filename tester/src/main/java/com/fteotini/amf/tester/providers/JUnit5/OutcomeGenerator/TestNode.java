@@ -9,36 +9,51 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 class TestNode {
     final Queue<TestNode> children = new ConcurrentLinkedQueue<>();
+    private final boolean isRoot;
 
     private String skipReason;
     private final TestIdentifier identifier;
     private TestExecutionResult result;
 
-    TestNode(TestIdentifier identifier) {
-        this.identifier = identifier;
+    private TestNode() {
+        identifier = null;
+        isRoot = true;
     }
 
-    public void addChild(TestNode child){
+    TestNode(TestIdentifier identifier) {
+        this.identifier = identifier;
+        isRoot = false;
+    }
+
+    public static TestNode Root() {
+        return new TestNode();
+    }
+
+    void addChild(TestNode child){
         children.add(child);
     }
 
-    public Optional<TestExecutionResult> getResult() {
+    Optional<TestExecutionResult> getResult() {
         return Optional.ofNullable(result);
     }
 
-    public void setResult(TestExecutionResult result) {
+    void setResult(TestExecutionResult result) {
         this.result = result;
     }
 
-    public Optional<TestIdentifier> getIdentifier() {
+    Optional<TestIdentifier> getIdentifier() {
         return Optional.ofNullable(identifier);
     }
 
-    public Optional<String> getSkipReason() {
+    Optional<String> getSkipReason() {
         return Optional.ofNullable(skipReason);
     }
 
-    public void setSkipReason(String skipReason) {
+    void setSkipReason(String skipReason) {
         this.skipReason = skipReason;
+    }
+
+    boolean isRoot() {
+        return isRoot;
     }
 }

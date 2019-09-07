@@ -88,9 +88,9 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
         verify(builder).build(rootTestNodeCaptor.capture());
 
-        var arg = rootTestNodeCaptor.getValue();
-        assertThat(arg.children).isEmpty();
-        assertThat(arg.getIdentifier()).isEmpty();
+        var rootNode = rootTestNodeCaptor.getValue();
+        assertThat(rootNode.children).isEmpty();
+        assertThat(rootNode.isRoot()).isTrue();
     }
 
     @Test
@@ -102,9 +102,9 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
         verify(builder).build(rootTestNodeCaptor.capture());
 
-        var arg = rootTestNodeCaptor.getValue();
-        assertThat(arg.children).hasSize(1);
-        assertThat(arg.children.peek())
+        var rootNode = rootTestNodeCaptor.getValue();
+        assertThat(rootNode.children).hasSize(1);
+        assertThat(rootNode.children.peek())
                 .usingRecursiveComparison()
                 .isEqualTo(new TestNode(testIdentifier));
     }
@@ -126,10 +126,10 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
         verify(builder).build(rootTestNodeCaptor.capture());
 
-        var arg = rootTestNodeCaptor.getValue();
-        assertThat(arg.children).hasSize(1);
+        var rootNode = rootTestNodeCaptor.getValue();
+        assertThat(rootNode.children).hasSize(1);
 
-        var firstLevelChild = arg.children.peek();
+        var firstLevelChild = rootNode.children.peek();
         assertThat(firstLevelChild.getIdentifier()).contains(parentIdentifier);
         assertThat(firstLevelChild.children).hasSize(1);
 
