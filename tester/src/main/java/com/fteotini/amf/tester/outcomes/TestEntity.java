@@ -12,7 +12,7 @@ public final class TestEntity {
     private final Throwable exception;
     private final Collection<TestEntity> children;
 
-    private TestEntity(String entityName, TestEntityType type, ExecutionResult result, String skipReason, Throwable exception, Collection<TestEntity> children) {
+    TestEntity(String entityName, TestEntityType type, ExecutionResult result, String skipReason, Throwable exception, Collection<TestEntity> children) {
         this.entityName = entityName;
         this.type = type;
         this.result = result;
@@ -29,19 +29,19 @@ public final class TestEntity {
         return new TestEntity(entityName,type,ExecutionResult.Success,null, null, children);
     }
 
-    public static TestEntity Failure(String entityName, TestEntityType type) {
-        return TestEntity.Failure(entityName,type,null);
+    public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception) {
+        return TestEntity.Failure(entityName,type,exception, null);
     }
 
-    public static TestEntity Failure(String entityName, TestEntityType type, Collection<TestEntity> children) {
+    public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception, Collection<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Failure,null, null, children);
     }
 
-    public static TestEntity Skipped(String entityName, TestEntityType type) {
-        return TestEntity.Skipped(entityName,type,null);
+    public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason) {
+        return TestEntity.Skipped(entityName,type,skipReason,null);
     }
 
-    public static TestEntity Skipped(String entityName, TestEntityType type, Collection<TestEntity> children) {
+    public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason, Collection<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Skipped,null, null, children);
     }
 
