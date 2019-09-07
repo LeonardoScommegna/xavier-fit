@@ -1,6 +1,6 @@
 package com.fteotini.amf.tester.outcomes;
 
-public enum TestResult {
+public enum ExecutionResult {
     Success,
     Failure,
     Skipped

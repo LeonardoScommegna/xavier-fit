@@ -3,19 +3,13 @@ package com.fteotini.amf.tester.outcomes;
 import java.util.Set;
 
 public class TestSuiteOutcome {
-    private final Set<TestClassOutcome<?>> testClasses;
-    private final TestResult outcome;
+    private final Set<TestEntity> rootTestContainers;
 
-    public TestSuiteOutcome(Set<TestClassOutcome<?>> testClasses, TestResult outcome) {
-        this.testClasses = testClasses;
-        this.outcome = outcome;
+    public TestSuiteOutcome(Set<TestEntity> rootTestContainers) {
+        this.rootTestContainers = rootTestContainers;
     }
 
-    public Set<TestClassOutcome<?>> getTestClasses() {
-        return testClasses;
-    }
-
-    public TestResult getOutcome() {
-        return outcome;
+    public Set<TestEntity> getRootTestContainers() {
+        return rootTestContainers;
     }
 }

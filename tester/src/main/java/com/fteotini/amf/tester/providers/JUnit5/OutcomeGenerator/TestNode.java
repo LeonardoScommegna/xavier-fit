@@ -25,7 +25,7 @@ class TestNode {
         isRoot = false;
     }
 
-    public static TestNode Root() {
+    static TestNode Root() {
         return new TestNode();
     }
 
