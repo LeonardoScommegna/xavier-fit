@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
@@ -38,9 +39,9 @@ class TestSuiteOutcomeGeneratingListenerTest {
             new AbstractMap.SimpleEntry<>(Type.TEST, TestEntityType.Method),
             new AbstractMap.SimpleEntry<>(Type.CONTAINER, TestEntityType.Class)
     );
-    private static final Map<TestExecutionResult, ExecutionResult> testResultMap = Map.ofEntries(
-            new AbstractMap.SimpleEntry<>(TestExecutionResult.successful(), ExecutionResult.Success),
-            new AbstractMap.SimpleEntry<>(TestExecutionResult.failed(new RuntimeException()), ExecutionResult.Failure)
+    private static final Map<TestExecutionResult.Status, ExecutionResult> testResultMap = Map.ofEntries(
+            new AbstractMap.SimpleEntry<>(TestExecutionResult.Status.SUCCESSFUL, ExecutionResult.Success),
+            new AbstractMap.SimpleEntry<>(TestExecutionResult.Status.FAILED, ExecutionResult.Failure)
     );
     @Mock
     private JupiterConfiguration dummyConfig;
@@ -80,8 +81,8 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
             for (var child : children) {
                 when(child.getParent()).thenReturn(Optional.of(mock));
-                var childSegment = child.getUniqueId().getLastSegment();
-                when(child.getUniqueId()).thenReturn(mock.getUniqueId().append(childSegment));
+                /*var childSegment = child.getUniqueId().getLastSegment();
+                when(child.getUniqueId()).thenReturn(mock.getUniqueId().append(childSegment));*/
             }
         }
 
@@ -121,17 +122,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
     }
 
     @Test
-    @Disabled
-    void Given_a_not_yet_started_execution_then_calling_testPlanExecutionFinished_should_throw() {
-        var dummyTestPlan = TestPlan.from(Collections.emptyList());
-        var sut = notStartedSut();
-
-        assertThatExceptionOfType(TestSuiteNotStartedYetException.class)
-                .isThrownBy(() -> sut.testPlanExecutionFinished(dummyTestPlan));
-    }
-
-    @Test
-    void Given_a_finished_execution_with_no_test_it_should_return_aan_empty_outcome() {
+    void Given_a_finished_execution_with_no_test_it_should_return_an_empty_outcome() {
         var sut = finishedSut();
 
         var result = sut.generateTestSuiteOutcome();
@@ -182,12 +173,13 @@ class TestSuiteOutcomeGeneratingListenerTest {
         var result = sut.generateTestSuiteOutcome().getRootTestContainers().stream().findFirst().get();
         assertThat(result.getEntityName()).isEqualTo("foo");
         assertThat(result.getType()).isEqualTo(testTypeMap.get(actualType));
-        assertThat(result.getResult()).isEqualTo(testResultMap.get(actualResult));
+        assertThat(result.getResult()).isEqualTo(testResultMap.get(actualResult.getStatus()));
     }
 
-    @Test
-    void Given_a_test_then_marking_it_as_skipped_should_set_the_correct_properties_on_its_node() {
-        var test = TestIdentifier.from(buildTestDescriptor("foo", Type.CONTAINER));
+    @ParameterizedTest
+    @EnumSource(value = Type.class,names = {"CONTAINER","TEST"})
+    void Given_a_test_then_marking_it_as_skipped_should_set_the_correct_properties_on_its_node(Type descriptorType) {
+        var test = TestIdentifier.from(buildTestDescriptor("foo", descriptorType));
 
         var sut = finishedSut(s -> s.executionSkipped(test, "Reason"));
 
@@ -195,6 +187,21 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
         assertThat(skippedTest.getSkipReason()).contains("Reason");
         assertThat(skippedTest.getResult()).isEqualTo(ExecutionResult.Skipped);
+        assertThat(skippedTest.getType()).isEqualTo(testTypeMap.get(descriptorType));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Type.class,names = {"CONTAINER","TEST"})
+    void Given_a_test_then_marking_it_as_failed_should_set_the_correct_properties_on_its_node(Type descriptorType) {
+        var test = TestIdentifier.from(buildTestDescriptor("foo", descriptorType));
+
+        var throwable = new IllegalStateException();
+        var sut = finishedSut(s -> s.executionFinished(test, TestExecutionResult.failed(throwable)));
+
+        var skippedTest = sut.generateTestSuiteOutcome().getRootTestContainers().stream().findFirst().get();
+        assertThat(skippedTest.getResult()).isEqualTo(ExecutionResult.Failure);
+        assertThat(skippedTest.getType()).isEqualTo(testTypeMap.get(descriptorType));
+        assertThat(skippedTest.getException()).contains(throwable);
     }
 
     private TestSuiteOutcomeGeneratingListener notStartedSut() {

@@ -34,7 +34,7 @@ public final class TestEntity {
     }
 
     public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception, Collection<TestEntity> children) {
-        return new TestEntity(entityName,type,ExecutionResult.Failure,null, null, children);
+        return new TestEntity(entityName,type,ExecutionResult.Failure,null, exception, children);
     }
 
     public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason) {
@@ -42,7 +42,7 @@ public final class TestEntity {
     }
 
     public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason, Collection<TestEntity> children) {
-        return new TestEntity(entityName,type,ExecutionResult.Skipped,null, null, children);
+        return new TestEntity(entityName,type,ExecutionResult.Skipped,skipReason, null, children);
     }
 
     public String getEntityName() {
