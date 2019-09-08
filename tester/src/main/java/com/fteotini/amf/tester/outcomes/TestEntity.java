@@ -12,7 +12,7 @@ public final class TestEntity {
     private final Throwable exception;
     private final Collection<TestEntity> children;
 
-    TestEntity(String entityName, TestEntityType type, ExecutionResult result, String skipReason, Throwable exception, Collection<TestEntity> children) {
+    private TestEntity(String entityName, TestEntityType type, ExecutionResult result, String skipReason, Throwable exception, Collection<TestEntity> children) {
         this.entityName = entityName;
         this.type = type;
         this.result = result;
