@@ -1,7 +1,7 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
 import com.fteotini.amf.tester.TestRunner;
-import com.fteotini.amf.tester.outcomes.TestSuiteOutcome;
+import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -33,7 +33,7 @@ class JUnit5TestRunner implements TestRunner {
     }
 
     @Override
-    public TestSuiteOutcome runEntireSuite() {
+    public TestExecutionSummary runEntireSuite() {
 
         var originalClassLoader = getDefaultClassLoader();
         var url = additionalClassPaths.stream().map(JUnit5TestRunner::ToURL).toArray(URL[]::new);
@@ -61,7 +61,7 @@ class JUnit5TestRunner implements TestRunner {
     }
 
     @Override
-    public <T> TestSuiteOutcome runSingleMethod(Class<T> clazz, Function<T, Method> methodSelector) {
+    public <T> TestExecutionSummary runSingleMethod(Class<T> clazz, Function<T, Method> methodSelector) {
         return null;
     }
 

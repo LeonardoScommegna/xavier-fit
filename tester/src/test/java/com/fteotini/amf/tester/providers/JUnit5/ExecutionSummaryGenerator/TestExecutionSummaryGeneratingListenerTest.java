@@ -1,12 +1,10 @@
-package com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator;
+package com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator;
 
-import com.fteotini.amf.tester.outcomes.ExecutionResult;
-import com.fteotini.amf.tester.outcomes.TestEntityType;
-import com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator.exceptions.TestSuiteNotFinishedYetException;
-import com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator.exceptions.TestSuiteNotStartedYetException;
+import com.fteotini.amf.tester.ExecutionSummary.ExecutionResult;
+import com.fteotini.amf.tester.ExecutionSummary.TestEntityType;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +31,8 @@ import static org.junit.platform.engine.TestDescriptor.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-class TestSuiteOutcomeGeneratingListenerTest {
+@Tag("UnitTest")
+class TestExecutionSummaryGeneratingListenerTest {
     private static final UniqueId EngineId = UniqueId.forEngine("dummy-engine");
     private static final Map<Type, TestEntityType> testTypeMap = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(Type.TEST, TestEntityType.Method),
@@ -126,7 +125,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
         var sut = finishedSut();
 
         var result = sut.generateTestSuiteOutcome();
-        assertThat(result.getRootTestContainers()).isEmpty();
+        assertThat(result.getTestContainers()).isEmpty();
     }
 
     @Test
@@ -142,9 +141,9 @@ class TestSuiteOutcomeGeneratingListenerTest {
         });
 
         var result = sut.generateTestSuiteOutcome();
-        assertThat(result.getRootTestContainers()).hasSize(1);
+        assertThat(result.getTestContainers()).hasSize(1);
 
-        var firstLevelChild = result.getRootTestContainers().stream().findFirst().get();
+        var firstLevelChild = result.getTestContainers().stream().findFirst().get();
         assertThat(firstLevelChild.getEntityName()).isEqualTo("testClass");
         assertThat(firstLevelChild.hasChildren()).isTrue();
         assertThat(firstLevelChild.getResult()).isEqualTo(ExecutionResult.Success);
@@ -170,7 +169,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
         var sut = finishedSut(s -> s.executionFinished(test, actualResult));
 
-        var result = sut.generateTestSuiteOutcome().getRootTestContainers().stream().findFirst().get();
+        var result = sut.generateTestSuiteOutcome().getTestContainers().stream().findFirst().get();
         assertThat(result.getEntityName()).isEqualTo("foo");
         assertThat(result.getType()).isEqualTo(testTypeMap.get(actualType));
         assertThat(result.getResult()).isEqualTo(testResultMap.get(actualResult.getStatus()));
@@ -183,7 +182,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
 
         var sut = finishedSut(s -> s.executionSkipped(test, "Reason"));
 
-        var skippedTest = sut.generateTestSuiteOutcome().getRootTestContainers().stream().findFirst().get();
+        var skippedTest = sut.generateTestSuiteOutcome().getTestContainers().stream().findFirst().get();
 
         assertThat(skippedTest.getSkipReason()).contains("Reason");
         assertThat(skippedTest.getResult()).isEqualTo(ExecutionResult.Skipped);
@@ -198,23 +197,23 @@ class TestSuiteOutcomeGeneratingListenerTest {
         var throwable = new IllegalStateException();
         var sut = finishedSut(s -> s.executionFinished(test, TestExecutionResult.failed(throwable)));
 
-        var skippedTest = sut.generateTestSuiteOutcome().getRootTestContainers().stream().findFirst().get();
+        var skippedTest = sut.generateTestSuiteOutcome().getTestContainers().stream().findFirst().get();
         assertThat(skippedTest.getResult()).isEqualTo(ExecutionResult.Failure);
         assertThat(skippedTest.getType()).isEqualTo(testTypeMap.get(descriptorType));
         assertThat(skippedTest.getException()).contains(throwable);
     }
 
-    private TestSuiteOutcomeGeneratingListener notStartedSut() {
-        return new TestSuiteOutcomeGeneratingListener();
+    private TestExecutionSummaryGeneratingListener notStartedSut() {
+        return new TestExecutionSummaryGeneratingListener();
     }
 
-    private TestSuiteOutcomeGeneratingListener startedSut() {
+    private TestExecutionSummaryGeneratingListener startedSut() {
         var sut = notStartedSut();
         sut.testPlanExecutionStarted(TestPlan.from(Collections.emptyList()));
         return sut;
     }
 
-    private TestSuiteOutcomeGeneratingListener finishedSut(Consumer<TestSuiteOutcomeGeneratingListener> execution) {
+    private TestExecutionSummaryGeneratingListener finishedSut(Consumer<TestExecutionSummaryGeneratingListener> execution) {
         var sut = startedSut();
         execution.accept(sut);
         sut.testPlanExecutionFinished(TestPlan.from(Collections.emptyList()));
@@ -222,7 +221,7 @@ class TestSuiteOutcomeGeneratingListenerTest {
         return sut;
     }
 
-    private TestSuiteOutcomeGeneratingListener finishedSut() {
+    private TestExecutionSummaryGeneratingListener finishedSut() {
         return finishedSut(noop -> {
         });
     }

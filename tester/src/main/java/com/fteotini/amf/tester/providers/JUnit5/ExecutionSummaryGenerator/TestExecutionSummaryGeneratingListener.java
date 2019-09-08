@@ -1,9 +1,8 @@
-package com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator;
+package com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator;
 
-import com.fteotini.amf.tester.outcomes.TestEntity;
-import com.fteotini.amf.tester.outcomes.TestEntityType;
-import com.fteotini.amf.tester.outcomes.TestSuiteOutcome;
-import com.fteotini.amf.tester.providers.JUnit5.OutcomeGenerator.exceptions.TestSuiteNotFinishedYetException;
+import com.fteotini.amf.tester.ExecutionSummary.TestEntity;
+import com.fteotini.amf.tester.ExecutionSummary.TestEntityType;
+import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.platform.engine.TestDescriptor.Type;
 
-public class TestSuiteOutcomeGeneratingListener implements TestExecutionListener {
+public class TestExecutionSummaryGeneratingListener implements TestExecutionListener {
     private static final String ROOT_IDENTIFIER = "Root_Identifier";
     private static final Map<Type, TestEntityType> typeMapping = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(Type.TEST, TestEntityType.Method),
@@ -30,13 +29,13 @@ public class TestSuiteOutcomeGeneratingListener implements TestExecutionListener
     private boolean isFinished = false;
 
 
-    public TestSuiteOutcome generateTestSuiteOutcome() {
+    public TestExecutionSummary generateTestSuiteOutcome() {
         if (!isFinished)
             throw new TestSuiteNotFinishedYetException();
 
         var set = getChildrenByParentId(ROOT_IDENTIFIER);
 
-        return new TestSuiteOutcome(set);
+        return new TestExecutionSummary(set);
     }
 
     @Override

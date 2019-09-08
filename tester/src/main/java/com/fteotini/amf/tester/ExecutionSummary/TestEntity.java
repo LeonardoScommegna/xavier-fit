@@ -1,4 +1,4 @@
-package com.fteotini.amf.tester.outcomes;
+package com.fteotini.amf.tester.ExecutionSummary;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,24 +21,12 @@ public final class TestEntity {
         this.children = children != null ? Collections.unmodifiableCollection(children) : Collections.unmodifiableCollection(Collections.emptyList());
     }
 
-    public static TestEntity Success(String entityName, TestEntityType type) {
-        return TestEntity.Success(entityName,type,null);
-    }
-
     public static TestEntity Success(String entityName, TestEntityType type, Collection<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Success,null, null, children);
     }
 
-    public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception) {
-        return TestEntity.Failure(entityName,type,exception, null);
-    }
-
     public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception, Collection<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Failure,null, exception, children);
-    }
-
-    public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason) {
-        return TestEntity.Skipped(entityName,type,skipReason,null);
     }
 
     public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason, Collection<TestEntity> children) {
