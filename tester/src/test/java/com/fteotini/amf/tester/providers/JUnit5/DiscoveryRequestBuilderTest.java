@@ -17,7 +17,7 @@ class DiscoveryRequestBuilderTest {
         var paths = Set.of(Path.of("src", "main"), Path.of("src", "test"));
         var classPatterns = Set.of("pattern.*", "class");
 
-        var result = new DiscoveryRequestBuilder().build(DiscoveryRequestOptions.ForEntireSuite(classPatterns,paths));
+        var result = new DiscoveryRequestBuilder(DiscoveryRequestOptions.ForEntireSuite(classPatterns, paths)).build();
 
         var classSelectors = result.getSelectorsByType(ClasspathRootSelector.class);
         assertThat(classSelectors).hasSize(2);
@@ -33,7 +33,7 @@ class DiscoveryRequestBuilderTest {
 
     @Test
     void Given_an_empty_suite_option_obj_then_it_should_build_the_right_DiscoveryRequest() {
-        var result = new DiscoveryRequestBuilder().build(DiscoveryRequestOptions.ForEntireSuite(Collections.emptySet(), Collections.emptySet()));
+        var result = new DiscoveryRequestBuilder(DiscoveryRequestOptions.ForEntireSuite(Collections.emptySet(), Collections.emptySet())).build();
 
         var classSelectors = result.getSelectorsByType(ClasspathRootSelector.class);
         assertThat(classSelectors).isEmpty();

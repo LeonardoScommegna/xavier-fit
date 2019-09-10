@@ -13,14 +13,20 @@ import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNa
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 
 class DiscoveryRequestBuilder {
-    LauncherDiscoveryRequest build(DiscoveryRequestOptions options){
+    private DiscoveryRequestOptions options;
+
+    DiscoveryRequestBuilder(DiscoveryRequestOptions options) {
+        this.options = options;
+    }
+
+    LauncherDiscoveryRequest build() {
         return LauncherDiscoveryRequestBuilder.request()
-                .selectors(buildSelectors(options))
-                .filters(buildFilters(options))
+                .selectors(buildSelectors())
+                .filters(buildFilters())
                 .build();
     }
 
-    private Filter<?>[] buildFilters(DiscoveryRequestOptions options) {
+    private Filter<?>[] buildFilters() {
         List<Filter<?>> filters = new ArrayList<>();
 
         if (!options.getClassNamePatterns().isEmpty()) {
@@ -30,7 +36,7 @@ class DiscoveryRequestBuilder {
         return filters.toArray(Filter[]::new);
     }
 
-    private List<? extends DiscoverySelector> buildSelectors(DiscoveryRequestOptions options) {
+    private List<? extends DiscoverySelector> buildSelectors() {
         List<? extends DiscoverySelector> selectors = Collections.emptyList();
 
         if (!options.getAdditionalClassPaths().isEmpty()){
