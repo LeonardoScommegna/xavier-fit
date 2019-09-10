@@ -5,10 +5,11 @@ import org.junit.platform.engine.Filter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 
 class DiscoveryRequestBuilder {
@@ -20,7 +21,13 @@ class DiscoveryRequestBuilder {
     }
 
     private Filter<?>[] buildFilters(DiscoveryRequestOptions options) {
-        return new Filter[0];
+        List<Filter<?>> filters = new ArrayList<>();
+
+        if (!options.getClassNamePatterns().isEmpty()) {
+            filters.add(includeClassNamePatterns(options.getClassNamePatterns().toArray(String[]::new)));
+        }
+
+        return filters.toArray(Filter[]::new);
     }
 
     private List<? extends DiscoverySelector> buildSelectors(DiscoveryRequestOptions options) {
