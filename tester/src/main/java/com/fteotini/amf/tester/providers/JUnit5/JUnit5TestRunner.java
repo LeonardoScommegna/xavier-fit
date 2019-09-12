@@ -1,84 +1,51 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
-import com.fteotini.amf.tester.TestRunner;
 import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
+import com.fteotini.amf.tester.TestRunner;
+import com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator.TestExecutionSummaryGeneratingListener;
 import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Path;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
-
 class JUnit5TestRunner implements TestRunner {
-    private final Set<Path> additionalClassPaths;
+    private final DiscoveryRequestBuilder requestBuilder;
+    private final ContextualTestRunner contextualTestRunner;
     private final Launcher launcher;
 
-    JUnit5TestRunner(Set<Path> additionalClassPaths, Supplier<Launcher> launcherFactory) {
-        this.additionalClassPaths = additionalClassPaths;
+    JUnit5TestRunner(DiscoveryRequestBuilder requestBuilder, ContextualTestRunner contextualTestRunner, Supplier<Launcher> launcherFactory) {
+        this.requestBuilder = requestBuilder;
+        this.contextualTestRunner = contextualTestRunner;
         launcher = launcherFactory.get();
     }
 
-    public JUnit5TestRunner(Set<Path> additionalClassPaths) {
-        this(additionalClassPaths, LauncherFactory::create);
+    public JUnit5TestRunner(DiscoveryRequestBuilder requestBuilder, ContextualTestRunner contextualTestRunner) {
+        this(requestBuilder, contextualTestRunner, LauncherFactory::create);
     }
 
     @Override
     public TestExecutionSummary runEntireSuite() {
+        return contextualTestRunner.run(this::invokeTestSuite);
+    }
 
-        var originalClassLoader = getDefaultClassLoader();
-        var url = additionalClassPaths.stream().map(JUnit5TestRunner::ToURL).toArray(URL[]::new);
-        var newClassLoader = URLClassLoader.newInstance(url, originalClassLoader);
+    private TestExecutionSummary invokeTestSuite() {
+        var testExecutionSummaryGeneratingListener = makeListener();
+        launcher.registerTestExecutionListeners(testExecutionSummaryGeneratingListener);
 
-//        var f = new Directory(classPathResource);
-        try {
-            Thread.currentThread().setContextClassLoader(newClassLoader);
+        var request = requestBuilder.build();
+        launcher.execute(request);
 
-            var discover = LauncherDiscoveryRequestBuilder.request()
-                    .selectors(selectClasspathRoots(additionalClassPaths))
-                    .filters(includeClassNamePatterns(".*Test"))
-                    .build();
+        return testExecutionSummaryGeneratingListener.generateTestSuiteOutcome();
+    }
 
-            var res = new SummaryGeneratingListener();
-            launcher.registerTestExecutionListeners(res);
-
-            var plan = launcher.discover(discover);
-
-            launcher.execute(plan);
-            return null;
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
+    TestExecutionSummaryGeneratingListener makeListener() {
+        return new TestExecutionSummaryGeneratingListener();
     }
 
     @Override
     public <T> TestExecutionSummary runSingleMethod(Class<T> clazz, Function<T, Method> methodSelector) {
         return null;
-    }
-
-    private static URL ToURL(Path path) {
-        try {
-            return path.toUri().toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static ClassLoader getDefaultClassLoader() {
-        try {
-            return Thread.currentThread().getContextClassLoader();
-        } catch (Throwable ex) {
-            /* ignore */
-        }
-        return ClassLoader.getSystemClassLoader();
     }
 }

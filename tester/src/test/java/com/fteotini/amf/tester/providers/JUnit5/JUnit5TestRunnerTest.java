@@ -1,60 +1,89 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
+import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
+import com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator.TestExecutionSummaryGeneratingListener;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
+import java.util.function.Supplier;
 
-@Tag("IntegrationTest")
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+@Tag("UnitTest")
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 class JUnit5TestRunnerTest {
+    @Mock
+    private DiscoveryRequestBuilder requestBuilder;
+    @Mock(lenient = true)
+    private ContextualTestRunner ctxRunner;
+    @Mock
+    private Launcher junitLauncher;
+    @Mock
+    private TestExecutionSummaryGeneratingListener listener;
 
-    private static final String SUREFIRE_VERSION = System.getProperty("surefire.version");
-    private static final String COMPILER_VERSION = System.getProperty("compiler.version");
+    private JUnit5TestRunner sut;
+
+    @BeforeEach
+    void setUp() {
+        sut = spy(new JUnit5TestRunner(requestBuilder, ctxRunner, () -> junitLauncher));
+        when(sut.makeListener()).thenReturn(listener);
+        when(ctxRunner.run(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Supplier.class).get());
+    }
 
     @Test
-    void it_can_run_a_suite() throws MavenInvocationException, URISyntaxException {
-        var projectName = "JUnit5TestRunner_Integration_project";
-        BuildTestSubProject(projectName);
+    void When_calling_runEntireSuite_it_should_register_as_listener_TestExecutionSummaryGeneratingListener() {
+        sut.runEntireSuite();
 
-        var cp = Path.of(getClass().getClassLoader().getResource(projectName + "/target/test-classes").toURI());
+        var listenerCaptor = ArgumentCaptor.forClass(TestExecutionListener.class);
+        verify(junitLauncher).registerTestExecutionListeners(listenerCaptor.capture());
 
-        new JUnit5TestRunner(Set.of(cp)).runEntireSuite();
+        assertThat(listenerCaptor.getValue()).isInstanceOf(TestExecutionSummaryGeneratingListener.class);
     }
 
-    private void BuildTestSubProject(String projectName) throws MavenInvocationException {
-        var pomUrl = getClass().getClassLoader().getResource(projectName + "/pom.xml");
+    @Test
+    void When_calling_runEntireSuite_it_should_return_the_return_value_from_the_listener() {
+        var expectedResult = new TestExecutionSummary(Collections.emptySet());
+        when(listener.generateTestSuiteOutcome()).thenReturn(expectedResult);
 
-        var invocationRequest = new DefaultInvocationRequest();
-        invocationRequest.setPomFile(new File(pomUrl.getFile()));
-        invocationRequest.setBatchMode(true);
-        invocationRequest.setGoals(BuildGoalsList("clean", "test-compile"));
+        var result = sut.runEntireSuite();
 
-        var invoker = new DefaultInvoker();
-        var result = invoker.execute(invocationRequest);
-
-        if (result.getExitCode() != 0) {
-            throw new RuntimeException("maven error");
-        }
+        assertThat(result).isEqualTo(expectedResult);
     }
 
-    private static List<String> BuildGoalsList(String... goals) {
-        var list = new ArrayList<String>();
+    @Test
+    void When_calling_runEntireSuite_it_should_call_the_requestBuilder_and_pass_its_result_to_the_launcher() {
+        var expected = mock(LauncherDiscoveryRequest.class);
+        when(requestBuilder.build()).thenReturn(expected);
 
-        list.add("-Dsurefire.version=" + SUREFIRE_VERSION);
-        list.add("-Dcompiler.version=" + COMPILER_VERSION);
-        list.add("-q");
+        sut.runEntireSuite();
 
-        list.addAll(Arrays.asList(goals));
+        verify(junitLauncher).execute(expected);
+    }
 
-        return list;
+    @Test
+    void When_calling_runEntireSuite_it_should_wrap_the_execution_in_a_function_and_pass_it_to_the_ctxRunner() {
+        var expected = mock(LauncherDiscoveryRequest.class);
+        when(requestBuilder.build()).thenReturn(expected);
+
+        doAnswer(invocationOnMock -> {
+            var res = invocationOnMock.getArgument(0, Supplier.class).get();
+            verify(junitLauncher).execute(expected);
+            return res;
+        }).when(ctxRunner).run(any());
+
+        sut.runEntireSuite();
     }
 }

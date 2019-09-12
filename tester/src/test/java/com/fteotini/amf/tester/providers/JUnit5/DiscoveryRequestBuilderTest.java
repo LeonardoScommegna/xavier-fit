@@ -1,5 +1,6 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.discovery.ClassNameFilter;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("UnitTest")
 class DiscoveryRequestBuilderTest {
 
     @Test
