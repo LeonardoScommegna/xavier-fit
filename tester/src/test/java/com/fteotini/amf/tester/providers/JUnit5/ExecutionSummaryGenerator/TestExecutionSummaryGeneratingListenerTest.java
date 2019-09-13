@@ -2,6 +2,7 @@ package com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator;
 
 import com.fteotini.amf.tester.ExecutionSummary.ExecutionResult;
 import com.fteotini.amf.tester.ExecutionSummary.TestEntityType;
+import org.assertj.core.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Tag("UnitTest")
 class TestExecutionSummaryGeneratingListenerTest {
-    private static final UniqueId EngineId = UniqueId.forEngine("dummy-engine");
+    private static final TestDescriptor engineDescriptor;
     private static final Map<Type, TestEntityType> testTypeMap = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(Type.TEST, TestEntityType.Method),
             new AbstractMap.SimpleEntry<>(Type.CONTAINER, TestEntityType.Class)
@@ -39,6 +40,15 @@ class TestExecutionSummaryGeneratingListenerTest {
             new AbstractMap.SimpleEntry<>(TestExecutionResult.Status.SUCCESSFUL, ExecutionResult.Success),
             new AbstractMap.SimpleEntry<>(TestExecutionResult.Status.FAILED, ExecutionResult.Failure)
     );
+
+    static {
+        var engineName = "dummy-engine";
+
+        engineDescriptor = mock(TestDescriptor.class);
+        when(engineDescriptor.getType()).thenReturn(Type.CONTAINER);
+        when(engineDescriptor.getDisplayName()).thenReturn(engineName);
+        when(engineDescriptor.getUniqueId()).thenReturn(UniqueId.forEngine(engineName));
+    }
 
     private static Stream<Arguments> availableDescriptorStates() {
         return Stream.of(
@@ -54,17 +64,20 @@ class TestExecutionSummaryGeneratingListenerTest {
     }
 
     private static TestDescriptor buildTestDescriptor(String entityName, Type descriptorType, Function<TestDescriptor, Set<? extends TestDescriptor>> childrenSupplier) {
+        var engineId = engineDescriptor.getUniqueId();
+
         var mock = mock(TestDescriptor.class);
         when(mock.getDisplayName()).thenReturn(entityName);
         when(mock.getType()).thenReturn(descriptorType);
-        when(mock.getUniqueId()).thenReturn(EngineId.append(descriptorType.toString(), UUID.randomUUID().toString()));
+        when(mock.getUniqueId()).thenReturn(engineId.append(descriptorType.toString(), UUID.randomUUID().toString()));
+        when(mock.getParent()).thenReturn(Optional.of(engineDescriptor));
 
         if (childrenSupplier != null) {
             var children = childrenSupplier.apply(mock);
             doReturn(children).when(mock).getChildren();
 
             for (var child : children) {
-                when(child.getParent()).thenReturn(Optional.of(mock));
+                doReturn(Optional.of(mock)).when(child).getParent();
             }
         }
 
@@ -196,17 +209,19 @@ class TestExecutionSummaryGeneratingListenerTest {
         return sut;
     }
 
-    private TestExecutionSummaryGeneratingListener finishedSut(Consumer<TestExecutionSummaryGeneratingListener> execution) {
+    private TestExecutionSummaryGeneratingListener finishedSut(@Nullable Consumer<TestExecutionSummaryGeneratingListener> execution) {
         var sut = startedSut();
-        execution.accept(sut);
+        if (execution != null) {
+            execution.accept(sut);
+            sut.executionFinished(TestIdentifier.from(engineDescriptor), TestExecutionResult.successful());
+        }
         sut.testPlanExecutionFinished(TestPlan.from(Collections.emptyList()));
 
         return sut;
     }
 
     private TestExecutionSummaryGeneratingListener finishedSut() {
-        return finishedSut(noop -> {
-        });
+        return finishedSut(null);
     }
 }
 

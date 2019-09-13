@@ -40,21 +40,8 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
         isFinished = true;
     }
 
-    @Override
-    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        TestEntity entity;
-        switch (testExecutionResult.getStatus()) {
-            case SUCCESSFUL:
-                entity = buildSuccessfulEntity(testIdentifier);
-                break;
-            case FAILED:
-                entity = buildFailedEntity(testIdentifier, testExecutionResult);
-                break;
-            case ABORTED:
-            default:
-                throw new IllegalStateException("Unexpected value: " + testExecutionResult.getStatus());
-        }
-        addEntity(testIdentifier, entity);
+    private static boolean isEngine(TestIdentifier testIdentifier) {
+        return testIdentifier.isContainer() && testIdentifier.getParentId().isEmpty() && isEngineId(testIdentifier.getUniqueId());
     }
 
     @Override
@@ -63,16 +50,9 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
         addEntity(testIdentifier, entity);
     }
 
-    private void addEntity(TestIdentifier testIdentifier, TestEntity entity) {
-        var entityId = testIdentifier.getUniqueId();
-        testsEntitiesByUniqueId.put(entityId, entity);
-
-        var parentId = testIdentifier.getParentId().orElse(ROOT_IDENTIFIER);
-        if (!testIdsByParentId.containsKey(parentId)) {
-            testIdsByParentId.put(parentId, new HashSet<>());
-        }
-
-        testIdsByParentId.get(parentId).add(entityId);
+    private static boolean isEngineId(String uniqueId) {
+        var segments = uniqueId.split("\\/");
+        return segments.length == 1 && segments[0].matches("^\\[engine:.+?\\]$");
     }
 
     private TestEntity buildFailedEntity(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
@@ -94,5 +74,36 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
     private TestEntity buildSkippedEntity(TestIdentifier testIdentifier, String reason) {
         var children = getChildrenByParentId(testIdentifier.getUniqueId());
         return TestEntity.Skipped(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()), reason, children);
+    }
+
+    @Override
+    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+        if (!isEngine(testIdentifier)) {
+            TestEntity entity;
+            switch (testExecutionResult.getStatus()) {
+                case SUCCESSFUL:
+                    entity = buildSuccessfulEntity(testIdentifier);
+                    break;
+                case FAILED:
+                    entity = buildFailedEntity(testIdentifier, testExecutionResult);
+                    break;
+                case ABORTED:
+                default:
+                    throw new IllegalStateException("Unexpected value: " + testExecutionResult.getStatus());
+            }
+            addEntity(testIdentifier, entity);
+        }
+    }
+
+    private void addEntity(TestIdentifier testIdentifier, TestEntity entity) {
+        var entityId = testIdentifier.getUniqueId();
+        testsEntitiesByUniqueId.put(entityId, entity);
+
+        var parentId = testIdentifier.getParentId().filter(id -> !isEngineId(id)).orElse(ROOT_IDENTIFIER);
+        if (!testIdsByParentId.containsKey(parentId)) {
+            testIdsByParentId.put(parentId, new HashSet<>());
+        }
+
+        testIdsByParentId.get(parentId).add(entityId);
     }
 }
