@@ -13,15 +13,15 @@ class DiscoveryRequestOptions {
         this.additionalClassPaths = additionalClassPaths == null ? Collections.emptySet() : additionalClassPaths;
     }
 
-    public static DiscoveryRequestOptions ForEntireSuite(Set<String> classNamePatterns, Set<Path> additionalClassPaths){
+    static DiscoveryRequestOptions ForEntireSuite(Set<String> classNamePatterns, Set<Path> additionalClassPaths) {
         return new DiscoveryRequestOptions(classNamePatterns,additionalClassPaths);
     }
 
-    public Set<String> getClassNamePatterns() {
+    Set<String> getClassNamePatterns() {
         return classNamePatterns;
     }
 
-    public Set<Path> getAdditionalClassPaths() {
+    Set<Path> getAdditionalClassPaths() {
         return additionalClassPaths;
     }
 }

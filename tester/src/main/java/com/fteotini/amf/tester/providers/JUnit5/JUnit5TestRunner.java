@@ -21,7 +21,7 @@ class JUnit5TestRunner implements TestRunner {
         launcher = launcherFactory.get();
     }
 
-    public JUnit5TestRunner(DiscoveryRequestBuilder requestBuilder, ContextualTestRunner contextualTestRunner) {
+    JUnit5TestRunner(DiscoveryRequestBuilder requestBuilder, ContextualTestRunner contextualTestRunner) {
         this(requestBuilder, contextualTestRunner, LauncherFactory::create);
     }
 
