@@ -8,10 +8,7 @@ import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -72,15 +69,15 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
 
         var parentId = testIdentifier.getParentId().orElse(ROOT_IDENTIFIER);
         if (!testIdsByParentId.containsKey(parentId)) {
-            testIdsByParentId.put(parentId, Set.of(entityId));
-        } else {
-            testIdsByParentId.get(parentId).add(entityId);
+            testIdsByParentId.put(parentId, new HashSet<>());
         }
+
+        testIdsByParentId.get(parentId).add(entityId);
     }
 
     private TestEntity buildFailedEntity(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         var children = getChildrenByParentId(testIdentifier.getUniqueId());
-        return TestEntity.Failure(testIdentifier.getDisplayName(),typeMapping.get(testIdentifier.getType()), testExecutionResult.getThrowable().get(), children);
+        return TestEntity.Failure(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()), testExecutionResult.getThrowable().get(), children);
     }
 
     private Set<TestEntity> getChildrenByParentId(String parentId) {
@@ -91,11 +88,11 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
 
     private TestEntity buildSuccessfulEntity(TestIdentifier testIdentifier) {
         var children = getChildrenByParentId(testIdentifier.getUniqueId());
-        return TestEntity.Success(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()),children);
+        return TestEntity.Success(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()), children);
     }
 
     private TestEntity buildSkippedEntity(TestIdentifier testIdentifier, String reason) {
         var children = getChildrenByParentId(testIdentifier.getUniqueId());
-        return TestEntity.Skipped(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()), reason,children);
+        return TestEntity.Skipped(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()), reason, children);
     }
 }

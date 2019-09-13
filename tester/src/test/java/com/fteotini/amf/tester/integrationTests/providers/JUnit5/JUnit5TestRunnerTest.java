@@ -1,5 +1,6 @@
 package com.fteotini.amf.tester.integrationTests.providers.JUnit5;
 
+import com.fteotini.amf.tester.providers.JUnit5.JUnit5TestRunnerFactory;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
@@ -12,12 +13,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Tag("IntegrationTest")
 class JUnit5TestRunnerTest {
-
     private static final String SUREFIRE_VERSION = System.getProperty("surefire.version");
     private static final String COMPILER_VERSION = System.getProperty("compiler.version");
+    private static final JUnit5TestRunnerFactory testRunnerFactory = new JUnit5TestRunnerFactory();
 
     private static List<String> BuildGoalsList(String... goals) {
         var list = new ArrayList<String>();
@@ -36,9 +38,14 @@ class JUnit5TestRunnerTest {
         var projectName = "JUnit5TestRunner_Integration_project";
         BuildTestSubProject(projectName);
 
-        var cp = Path.of(getClass().getClassLoader().getResource(projectName + "/target/test-classes").toURI());
+        var cp = getProjectClassPath(projectName);
+        var sut = testRunnerFactory.createTestRunner(Set.of(cp));
 
-        //new JUnit5TestRunner(Set.of(cp)).runEntireSuite();
+        var result = sut.runEntireSuite();
+    }
+
+    private Path getProjectClassPath(String projectName) throws URISyntaxException {
+        return Path.of(getClass().getClassLoader().getResource(projectName + "/target/test-classes").toURI());
     }
 
     private void BuildTestSubProject(String projectName) throws MavenInvocationException {

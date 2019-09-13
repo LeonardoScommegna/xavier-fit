@@ -17,6 +17,8 @@ import org.junit.platform.launcher.TestPlan;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -123,6 +125,24 @@ class TestExecutionSummaryGeneratingListenerTest {
         assertThat(secondLevelChild.getSkipReason()).isEmpty();
         assertThat(secondLevelChild.getType()).isEqualTo(TestEntityType.Method);
         assertThat(secondLevelChild.getChildren()).isEmpty();
+    }
+
+    @Test
+    void Given_a_parent_with_N_children_then_it_should_build_the_correct_structure() {
+        var childrenNumber = new Random().nextInt(10) + 2;
+        var children = IntStream.range(0, childrenNumber)
+                .mapToObj(idx -> buildTestDescriptor("test" + idx, Type.TEST))
+                .collect(Collectors.toSet());
+        var parent = buildTestDescriptor("testClass", Type.CONTAINER, $ -> children);
+
+        var sut = finishedSut(s -> {
+            children.forEach(child -> s.executionFinished(TestIdentifier.from(child), TestExecutionResult.successful()));
+            s.executionFinished(TestIdentifier.from(parent), TestExecutionResult.successful());
+        });
+
+        var parentEntity = sut.generateTestSuiteOutcome().getTestContainers().iterator().next();
+
+        assertThat(parentEntity.getChildren()).hasSize(childrenNumber);
     }
 
     @ParameterizedTest
