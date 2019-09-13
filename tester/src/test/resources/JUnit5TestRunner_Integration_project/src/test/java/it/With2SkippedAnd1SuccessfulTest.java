@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SkippedTest {
+class With2SkippedAnd1SuccessfulTest {
     @Test
     @Disabled("reason")
     void it_runs_the_test() {

@@ -25,7 +25,6 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
     private final Map<String, TestEntity> testsEntitiesByUniqueId = new ConcurrentHashMap<>();
     private boolean isFinished = false;
 
-
     public TestExecutionSummary generateTestSuiteOutcome() {
         if (!isFinished)
             throw new TestSuiteNotFinishedYetException();
@@ -40,14 +39,33 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
         isFinished = true;
     }
 
-    private static boolean isEngine(TestIdentifier testIdentifier) {
-        return testIdentifier.isContainer() && testIdentifier.getParentId().isEmpty() && isEngineId(testIdentifier.getUniqueId());
-    }
-
     @Override
     public void executionSkipped(TestIdentifier testIdentifier, String reason) {
         var entity = buildSkippedEntity(testIdentifier, reason);
         addEntity(testIdentifier, entity);
+    }
+
+    @Override
+    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+        if (!isEngine(testIdentifier)) {
+            TestEntity entity;
+            switch (testExecutionResult.getStatus()) {
+                case SUCCESSFUL:
+                    entity = buildSuccessfulEntity(testIdentifier);
+                    break;
+                case FAILED:
+                    entity = buildFailedEntity(testIdentifier, testExecutionResult);
+                    break;
+                case ABORTED:
+                default:
+                    throw new IllegalStateException("Unexpected value: " + testExecutionResult.getStatus());
+            }
+            addEntity(testIdentifier, entity);
+        }
+    }
+
+    private static boolean isEngine(TestIdentifier testIdentifier) {
+        return testIdentifier.isContainer() && testIdentifier.getParentId().isEmpty() && isEngineId(testIdentifier.getUniqueId());
     }
 
     private static boolean isEngineId(String uniqueId) {
@@ -74,25 +92,6 @@ public class TestExecutionSummaryGeneratingListener implements TestExecutionList
     private TestEntity buildSkippedEntity(TestIdentifier testIdentifier, String reason) {
         var children = getChildrenByParentId(testIdentifier.getUniqueId());
         return TestEntity.Skipped(testIdentifier.getDisplayName(), typeMapping.get(testIdentifier.getType()), reason, children);
-    }
-
-    @Override
-    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        if (!isEngine(testIdentifier)) {
-            TestEntity entity;
-            switch (testExecutionResult.getStatus()) {
-                case SUCCESSFUL:
-                    entity = buildSuccessfulEntity(testIdentifier);
-                    break;
-                case FAILED:
-                    entity = buildFailedEntity(testIdentifier, testExecutionResult);
-                    break;
-                case ABORTED:
-                default:
-                    throw new IllegalStateException("Unexpected value: " + testExecutionResult.getStatus());
-            }
-            addEntity(testIdentifier, entity);
-        }
     }
 
     private void addEntity(TestIdentifier testIdentifier, TestEntity entity) {
