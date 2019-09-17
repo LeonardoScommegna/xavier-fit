@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ProcessArgs {
+class ProcessArgs {
     private final Set<Path> launchClasspath;
     private final Path javaExecutable;
 
     private final boolean withDebugger;
     private final Integer debugPort;
 
-    public ProcessArgs(Path javaExecutable, Set<Path> launchClasspath) {
+    ProcessArgs(Path javaExecutable, Set<Path> launchClasspath) {
         this(javaExecutable, launchClasspath, false, null);
     }
 
-    public ProcessArgs(Path javaExecutable, Set<Path> launchClasspath, int debugPort) {
+    ProcessArgs(Path javaExecutable, Set<Path> launchClasspath, int debugPort) {
         this(javaExecutable, launchClasspath, true, debugPort);
     }
 
@@ -35,7 +35,7 @@ public class ProcessArgs {
         this.debugPort = debugPort;
     }
 
-    public String[] buildArgsArray() {
+    List<String> buildArgsList() {
         var args = new LinkedList<String>();
         args.add(getAbsolutePathAsString(javaExecutable));
         args.addAll(classPathArgs());
@@ -44,7 +44,7 @@ public class ProcessArgs {
             args.add(debugArgument());
         }
 
-        return args.toArray(String[]::new);
+        return args;
     }
 
     private static String getAbsolutePathAsString(Path path) {
