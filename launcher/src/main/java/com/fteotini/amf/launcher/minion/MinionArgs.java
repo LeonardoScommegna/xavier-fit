@@ -1,4 +1,4 @@
-package com.fteotini.amf.launcher;
+package com.fteotini.amf.launcher.minion;
 
 import java.util.Optional;
 import java.util.Set;

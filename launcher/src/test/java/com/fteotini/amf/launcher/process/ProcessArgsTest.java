@@ -1,5 +1,6 @@
-package com.fteotini.amf.launcher;
+package com.fteotini.amf.launcher.process;
 
+import com.fteotini.amf.launcher.process.ProcessArgs;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

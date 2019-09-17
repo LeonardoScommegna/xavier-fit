@@ -1,9 +1,11 @@
-package com.fteotini.amf.launcher;
+package com.fteotini.amf.launcher.minion;
 
 import java.io.IOException;
 
 public class MinionEntryPoint {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        Thread.sleep(2000);
+        System.out.println("wewe");
         /*DTO obj;
         try (var reader = new ObjectInputStream(System.in)){
             obj = (DTO) reader.readObject();

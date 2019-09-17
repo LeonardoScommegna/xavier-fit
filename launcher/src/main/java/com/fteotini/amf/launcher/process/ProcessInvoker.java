@@ -1,8 +1,25 @@
-package com.fteotini.amf.launcher;
+package com.fteotini.amf.launcher.process;
+
+import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.stream.ExecuteStreamHandler;
+
+import java.util.function.Supplier;
 
 public class ProcessInvoker {
-    public ProcessInvoker(ProcessArgs processArgs, MinionArgs minionArgs) {
+    private final ProcessArgs processArgs;
+    private final ExecuteStreamHandler processCommunicationHandler;
+    private final Supplier<ProcessExecutor> processExecutorSupplier;
+
+    public ProcessInvoker(ProcessArgs processArgs, ExecuteStreamHandler processCommunicationHandler) {
+        this(processArgs,processCommunicationHandler, ProcessExecutor::new);
     }
+
+    ProcessInvoker(ProcessArgs processArgs, ExecuteStreamHandler processCommunicationHandler, Supplier<ProcessExecutor> processExecutorSupplier) {
+        this.processArgs = processArgs;
+        this.processCommunicationHandler = processCommunicationHandler;
+        this.processExecutorSupplier = processExecutorSupplier;
+    }
+
     /*public static void main(String[] args) throws InterruptedException, TimeoutException, IOException, ClassNotFoundException {
         var inputMsg = new DTO(MinionEntry.class);
         var input = new InputStreamWriter()

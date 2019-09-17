@@ -1,4 +1,4 @@
-package com.fteotini.amf.launcher;
+package com.fteotini.amf.launcher.process;
 
 import com.google.common.base.Preconditions;
 
