@@ -1,7 +1,5 @@
 package com.fteotini.amf.launcher.process.communication;
 
-import com.fteotini.amf.launcher.util.MinionInputStreamHandler;
-import com.fteotini.amf.launcher.util.MinionOutputStreamHandler;
 import org.zeroturnaround.exec.stream.ExecuteStreamHandler;
 
 import java.io.IOException;

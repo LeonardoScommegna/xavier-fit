@@ -1,7 +1,5 @@
 package com.fteotini.amf.launcher.process.communication;
 
-import com.fteotini.amf.launcher.util.MinionInputStreamHandler;
-
 import java.util.function.Consumer;
 
 public class ReceiveData implements Consumer<MinionInputStreamHandler> {
