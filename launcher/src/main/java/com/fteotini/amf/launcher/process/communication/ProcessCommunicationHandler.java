@@ -13,12 +13,12 @@ import java.util.function.Function;
 public class ProcessCommunicationHandler implements ExecuteStreamHandler {
 
     private final Function<OutputStream, MinionOutputStreamHandler> outputStreamHandlerFactory;
-    private final Function<OutputStream, MinionInputStreamHandler> inputStreamHandlerFactory;
+    private final Function<InputStream, MinionInputStreamHandler> inputStreamHandlerFactory;
     private final Consumer<MinionOutputStreamHandler> sendInitialData;
     private final Consumer<MinionInputStreamHandler> receiveData;
 
     public ProcessCommunicationHandler(Function<OutputStream, MinionOutputStreamHandler> outputStreamHandlerFactory,
-                                       Function<OutputStream, MinionInputStreamHandler> inputStreamHandlerFactory,
+                                       Function<InputStream, MinionInputStreamHandler> inputStreamHandlerFactory,
                                        Consumer<MinionOutputStreamHandler> sendInitialData,
                                        Consumer<MinionInputStreamHandler> receiveData) {
 
@@ -30,26 +30,24 @@ public class ProcessCommunicationHandler implements ExecuteStreamHandler {
 
     @Override
     public void setProcessInputStream(OutputStream os) throws IOException {
-throw new RuntimeException("Not Implemented");
+        sendInitialData.accept(outputStreamHandlerFactory.apply(os));
     }
 
     @Override
     public void setProcessErrorStream(InputStream is) throws IOException {
-throw new RuntimeException("Not Implemented");
     }
 
     @Override
     public void setProcessOutputStream(InputStream is) throws IOException {
-throw new RuntimeException("Not Implemented");
+        receiveData.accept(inputStreamHandlerFactory.apply(is));
     }
 
     @Override
     public void start() throws IOException {
-throw new RuntimeException("Not Implemented");
     }
 
     @Override
     public void stop() {
-throw new RuntimeException("Not Implemented");
+
     }
 }
