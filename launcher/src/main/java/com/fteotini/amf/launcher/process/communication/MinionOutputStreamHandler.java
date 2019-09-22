@@ -5,10 +5,10 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-public class MinionOutputStreamHandler {
+class MinionOutputStreamHandler {
     private final OutputStream os;
 
-    public MinionOutputStreamHandler(final OutputStream os) {
+    MinionOutputStreamHandler(final OutputStream os) {
         this.os = os;
     }
 
