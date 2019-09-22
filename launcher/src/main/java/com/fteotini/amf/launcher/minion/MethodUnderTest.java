@@ -6,13 +6,13 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class MethodUnderTest implements Serializable {
+class MethodUnderTest implements Serializable {
     private static final long serialVersionUID = 42L;
 
     final Class<?> belongingClass;
     final Method method;
 
-    public MethodUnderTest(final Class<?> belongingClass, final Method method) {
+    MethodUnderTest(final Class<?> belongingClass, final Method method) {
         Preconditions.checkArgument(methodBelongsToClass(method, belongingClass), "The provided method does not belong to the provided class");
         this.belongingClass = belongingClass;
         this.method = method;

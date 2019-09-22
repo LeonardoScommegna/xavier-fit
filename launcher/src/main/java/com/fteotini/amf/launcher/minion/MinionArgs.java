@@ -1,9 +1,12 @@
 package com.fteotini.amf.launcher.minion;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
-public class MinionArgs {
+public class MinionArgs implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final MinionTestExecutionMode testExecutionMode;
     private final Set<String> classNamePatterns;
     private final MethodUnderTest methodUnderTest;
