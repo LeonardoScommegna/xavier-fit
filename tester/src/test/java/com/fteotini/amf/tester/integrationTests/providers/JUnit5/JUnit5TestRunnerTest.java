@@ -3,6 +3,8 @@ package com.fteotini.amf.tester.integrationTests.providers.JUnit5;
 import com.fteotini.amf.commons.tester.ExecutionSummary.ExecutionResult;
 import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntity;
 import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntityType;
+import com.fteotini.amf.commons.tester.TestExecutionMode;
+import com.fteotini.amf.tester.TestDiscoveryOptions;
 import com.fteotini.amf.tester.TestRunner;
 import com.fteotini.amf.tester.providers.JUnit5.JUnit5TestRunnerFactory;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -174,8 +176,9 @@ class JUnit5TestRunnerTest {
     }
 
     private TestRunner buildTestRunnerForSubProject() {
-        var cp = getProjectClassPath();
-        return testRunnerFactory.createTestRunner(Set.of(cp));
+        var options = new TestDiscoveryOptions(TestExecutionMode.ENTIRE_SUITE)
+                .withAdditionalClassPaths(Set.of(getProjectClassPath()));
+        return testRunnerFactory.createTestRunner(options);
     }
 
     private Path getProjectClassPath() {

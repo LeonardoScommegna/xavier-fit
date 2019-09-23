@@ -1,5 +1,6 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
+import com.fteotini.amf.tester.TestDiscoveryOptions;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.Filter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -13,9 +14,9 @@ import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNa
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 
 class DiscoveryRequestBuilder {
-    private DiscoveryRequestOptions options;
+    private TestDiscoveryOptions options;
 
-    DiscoveryRequestBuilder(DiscoveryRequestOptions options) {
+    DiscoveryRequestBuilder(TestDiscoveryOptions options) {
         this.options = options;
     }
 
@@ -29,8 +30,8 @@ class DiscoveryRequestBuilder {
     private Filter<?>[] buildFilters() {
         List<Filter<?>> filters = new ArrayList<>();
 
-        if (!options.getClassNamePatterns().isEmpty()) {
-            filters.add(includeClassNamePatterns(options.getClassNamePatterns().toArray(String[]::new)));
+        if (!options.getIncludedClassNamePatterns().isEmpty()) {
+            filters.add(includeClassNamePatterns(options.getIncludedClassNamePatterns().toArray(String[]::new)));
         }
 
         return filters.toArray(Filter[]::new);
