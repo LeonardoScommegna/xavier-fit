@@ -23,12 +23,11 @@ class ClassPathResolverTest {
         var oldCP = System.getProperty(key);
 
         try {
-            var currentlyLoadedCP = oldCP.split(File.pathSeparator);
             System.setProperty(key, oldCP + File.pathSeparator + "not_existing");
 
             var result = new ClassPathResolver().getClassPaths();
 
-            assertThat(result).hasSameSizeAs(currentlyLoadedCP);
+            assertThat(result).noneSatisfy(p -> assertThat(p.toString()).endsWith("not_existing"));
         } finally {
             System.setProperty(key, oldCP);
         }
