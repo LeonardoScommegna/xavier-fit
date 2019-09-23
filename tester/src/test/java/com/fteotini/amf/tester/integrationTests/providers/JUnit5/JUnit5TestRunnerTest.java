@@ -1,8 +1,8 @@
 package com.fteotini.amf.tester.integrationTests.providers.JUnit5;
 
-import com.fteotini.amf.tester.ExecutionSummary.ExecutionResult;
-import com.fteotini.amf.tester.ExecutionSummary.TestEntity;
-import com.fteotini.amf.tester.ExecutionSummary.TestEntityType;
+import com.fteotini.amf.commons.tester.ExecutionSummary.ExecutionResult;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntity;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntityType;
 import com.fteotini.amf.tester.TestRunner;
 import com.fteotini.amf.tester.providers.JUnit5.JUnit5TestRunnerFactory;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;

@@ -1,6 +1,7 @@
 package com.fteotini.amf.tester;
 
-import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
+
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestExecutionSummary;
 
 import java.lang.reflect.Method;
 import java.util.function.Function;

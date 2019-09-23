@@ -1,6 +1,6 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
-import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestExecutionSummary;
 import com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator.TestExecutionSummaryGeneratingListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

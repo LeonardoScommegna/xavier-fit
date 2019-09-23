@@ -1,8 +1,8 @@
 package com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator;
 
-import com.fteotini.amf.tester.ExecutionSummary.TestEntity;
-import com.fteotini.amf.tester.ExecutionSummary.TestEntityType;
-import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntity;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntityType;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestExecutionSummary;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;

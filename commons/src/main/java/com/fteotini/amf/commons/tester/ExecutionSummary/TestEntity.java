@@ -1,4 +1,4 @@
-package com.fteotini.amf.tester.ExecutionSummary;
+package com.fteotini.amf.commons.tester.ExecutionSummary;
 
 import java.util.Collection;
 import java.util.Collections;

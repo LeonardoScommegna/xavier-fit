@@ -1,6 +1,5 @@
-package com.fteotini.amf.launcher.minion;
+package com.fteotini.amf.commons.tester;
 
-import com.fteotini.amf.launcher.minion.MethodUnderTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

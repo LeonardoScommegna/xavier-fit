@@ -1,8 +1,8 @@
 package com.fteotini.amf.launcher.minion;
 
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestExecutionSummary;
 import com.fteotini.amf.launcher.MinionInputStreamHandler;
 import com.fteotini.amf.launcher.MinionOutputStreamHandler;
-import com.fteotini.amf.tester.ExecutionSummary.TestExecutionSummary;
 import com.fteotini.amf.tester.TestRunner;
 import com.fteotini.amf.tester.providers.JUnit5.JUnit5TestRunnerFactory;
 

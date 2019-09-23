@@ -1,4 +1,4 @@
-package com.fteotini.amf.tester.ExecutionSummary;
+package com.fteotini.amf.commons.tester.ExecutionSummary;
 
 public enum ExecutionResult {
     Success,

@@ -1,4 +1,4 @@
-package com.fteotini.amf.launcher.util;
+package com.fteotini.amf.commons.util;
 
 import org.junit.jupiter.api.Test;
 

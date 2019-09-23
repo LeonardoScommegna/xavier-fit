@@ -1,4 +1,4 @@
-package com.fteotini.amf.launcher.minion;
+package com.fteotini.amf.commons.tester;
 
 import com.google.common.base.Preconditions;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-class MethodUnderTest implements Serializable {
+public class MethodUnderTest implements Serializable {
     private static final long serialVersionUID = 42L;
 
     final Class<?> belongingClass;

@@ -29,6 +29,11 @@
             <version>5.5.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fteotini</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <testResources>

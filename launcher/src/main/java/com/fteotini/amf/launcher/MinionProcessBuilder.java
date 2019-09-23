@@ -1,11 +1,13 @@
 package com.fteotini.amf.launcher;
 
+import com.fteotini.amf.commons.util.ClassPathResolver;
+import com.fteotini.amf.commons.util.JavaExecutableLocator;
 import com.fteotini.amf.launcher.minion.MinionArgs;
 import com.fteotini.amf.launcher.process.ProcessArgs;
 import com.fteotini.amf.launcher.process.ProcessInvoker;
-import com.fteotini.amf.launcher.process.communication.*;
-import com.fteotini.amf.launcher.util.ClassPathResolver;
-import com.fteotini.amf.launcher.util.JavaExecutableLocator;
+import com.fteotini.amf.launcher.process.communication.ProcessCommunicationHandler;
+import com.fteotini.amf.launcher.process.communication.ReceiveData;
+import com.fteotini.amf.launcher.process.communication.SendInitialData;
 import org.zeroturnaround.exec.stream.ExecuteStreamHandler;
 
 import java.nio.file.Path;

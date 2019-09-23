@@ -10,6 +10,7 @@
     <modules>
         <module>tester</module>
         <module>launcher</module>
+        <module>commons</module>
     </modules>
 
     <name>annotation.mutation.framework</name>

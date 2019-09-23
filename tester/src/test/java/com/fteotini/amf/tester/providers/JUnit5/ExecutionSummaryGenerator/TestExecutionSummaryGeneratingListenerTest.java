@@ -1,7 +1,7 @@
 package com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator;
 
-import com.fteotini.amf.tester.ExecutionSummary.ExecutionResult;
-import com.fteotini.amf.tester.ExecutionSummary.TestEntityType;
+import com.fteotini.amf.commons.tester.ExecutionSummary.ExecutionResult;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntityType;
 import org.assertj.core.annotations.Nullable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
