@@ -1,11 +1,16 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
+import com.fteotini.amf.commons.tester.MethodUnderTest;
+import com.fteotini.amf.commons.tester.TestExecutionMode;
 import com.fteotini.amf.tester.TestDiscoveryOptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.platform.engine.discovery.ClassNameFilter;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
+import org.junit.platform.engine.discovery.MethodSelector;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -38,6 +43,34 @@ class DiscoveryRequestBuilderTest {
         assertThat(patternFilters.get(0).toPredicate().test("classasdasdads")).isFalse();
     }
 
+    @ParameterizedTest
+    @EnumSource(value = TestExecutionMode.class, mode = EnumSource.Mode.EXCLUDE, names = "ENTIRE_SUITE")
+    void Given_an_executionMode_different_from_entire_suite_then_the_built_DiscoveryRequest_should_not_contain_any_ClasspathRootSelector(TestExecutionMode executionMode) {
+        var paths = Set.of(Path.of("src", "main"));
+
+        var options = new TestDiscoveryOptions(executionMode)
+                .withAdditionalClassPaths(paths);
+        var result = new DiscoveryRequestBuilder(options).build();
+
+        var classSelectors = result.getSelectorsByType(ClasspathRootSelector.class);
+        assertThat(classSelectors).isEmpty();
+    }
+
+    @Test
+    void Given_an_option_obj_for_test_methods_then_the_built_DiscoveryRequest_should_contain_the_right_selectors() throws NoSuchMethodException {
+        var belongingClass = DummyTestClass.class;
+        var method = belongingClass.getDeclaredMethod("dummyTest");
+
+        var options = new TestDiscoveryOptions(TestExecutionMode.SINGLE_METHOD)
+                .withSelectedMethods(Set.of(new MethodUnderTest(belongingClass, method)));
+        var result = new DiscoveryRequestBuilder(options).build();
+
+        var methodSelectors = result.getSelectorsByType(MethodSelector.class);
+        assertThat(methodSelectors).hasSize(1);
+        assertThat(methodSelectors.get(0).getJavaClass()).isEqualTo(belongingClass);
+        assertThat(methodSelectors.get(0).getJavaMethod()).isEqualTo(method);
+    }
+
     @Test
     @Disabled("should be useless by now")
     void Given_an_empty_suite_option_obj_then_it_should_build_the_right_DiscoveryRequest() {
@@ -48,5 +81,10 @@ class DiscoveryRequestBuilderTest {
 
         var patternFilters = result.getFiltersByType(ClassNameFilter.class);
         assertThat(patternFilters).isEmpty();
+    }
+
+    static class DummyTestClass {
+        void dummyTest() {
+        }
     }
 }
