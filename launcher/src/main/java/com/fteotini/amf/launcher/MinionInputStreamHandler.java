@@ -1,4 +1,4 @@
-package com.fteotini.amf.launcher.process.communication;
+package com.fteotini.amf.launcher;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ public class MinionInputStreamHandler {
     }
 
     @SuppressWarnings({"SameParameterValue", "unchecked"})
-    <T extends Serializable> T readObject(Class<T> type) throws IOException, ClassNotFoundException {
+    public <T extends Serializable> T readObject(Class<T> type) throws IOException, ClassNotFoundException {
         try (var objReader = new ObjectInputStream(is)) {
             return (T) objReader.readObject();
         }

@@ -1,4 +1,4 @@
-package com.fteotini.amf.launcher.process.communication;
+package com.fteotini.amf.launcher;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -12,7 +12,7 @@ public class MinionOutputStreamHandler {
         this.os = os;
     }
 
-    <T extends Serializable> void writeObject(final T value) throws IOException {
+    public <T extends Serializable> void writeObject(final T value) throws IOException {
         try (var writer = new ObjectOutputStream(os)) {
             writer.writeObject(value);
             writer.flush();

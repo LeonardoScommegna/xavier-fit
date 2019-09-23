@@ -1,4 +1,5 @@
-package com.fteotini.amf.launcher.process.communication;
+package com.fteotini.amf.launcher;
+import com.fteotini.amf.launcher.MinionInputStreamHandler;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;

@@ -1,7 +1,7 @@
 package com.fteotini.amf.launcher.process.communication;
 
+import com.fteotini.amf.launcher.MinionOutputStreamHandler;
 import com.fteotini.amf.launcher.minion.MinionArgs;
-import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.util.function.Consumer;
