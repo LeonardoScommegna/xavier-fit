@@ -14,7 +14,7 @@ class MethodUnderTestUnitTest {
 
     @Test
     void It_should_be_serializable() throws NoSuchMethodException {
-        var sut = new MethodUnderTest(Dummy.class, Dummy.class.getMethod("hello"));
+        var sut = new MethodUnderTest(Dummy.class, Dummy.class.getDeclaredMethod("hello"));
 
         assertThat(sut).isInstanceOf(Serializable.class);
     }
@@ -28,7 +28,7 @@ class MethodUnderTestUnitTest {
     }
 
     static class Dummy {
-        public void hello() {
+        void hello() {
         }
     }
 

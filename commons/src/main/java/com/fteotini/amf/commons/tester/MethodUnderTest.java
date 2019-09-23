@@ -12,7 +12,7 @@ public class MethodUnderTest implements Serializable {
     private final Class<?> belongingClass;
     private final Method method;
 
-    MethodUnderTest(final Class<?> belongingClass, final Method method) {
+    public MethodUnderTest(final Class<?> belongingClass, final Method method) {
         Preconditions.checkArgument(methodBelongsToClass(method, belongingClass), "The provided method does not belong to the provided class");
         this.belongingClass = belongingClass;
         this.method = method;
@@ -27,6 +27,6 @@ public class MethodUnderTest implements Serializable {
     }
 
     private boolean methodBelongsToClass(Method method, Class<?> aClass) {
-        return Arrays.asList(aClass.getMethods()).contains(method);
+        return Arrays.asList(aClass.getDeclaredMethods()).contains(method);
     }
 }
