@@ -7,7 +7,6 @@ import org.zeroturnaround.exec.stream.ExecuteStreamHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
@@ -27,7 +26,7 @@ public class ProcessInvoker {
         this.processExecutorSupplier = processExecutorSupplier;
     }
 
-    public Future<ProcessResult> startMinionProcess() throws IOException {
+    Future<ProcessResult> startMinionProcess() throws IOException {
         var command = getArgsList();
         return processExecutorSupplier.get()
                 .command(command)

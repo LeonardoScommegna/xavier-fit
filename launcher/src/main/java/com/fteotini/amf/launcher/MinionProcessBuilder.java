@@ -1,9 +1,12 @@
 package com.fteotini.amf.launcher;
 
 import com.fteotini.amf.launcher.minion.MinionArgs;
+import com.fteotini.amf.launcher.process.ProcessArgs;
 import com.fteotini.amf.launcher.process.ProcessInvoker;
+import com.fteotini.amf.launcher.process.communication.*;
 import com.fteotini.amf.launcher.util.ClassPathResolver;
 import com.fteotini.amf.launcher.util.JavaExecutableLocator;
+import org.zeroturnaround.exec.stream.ExecuteStreamHandler;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -32,7 +35,18 @@ public class MinionProcessBuilder {
     }
 
     public ProcessInvoker build() {
+        return new ProcessInvoker(buildProcessArgs(), buildCommunicationHandler());
+    }
 
+    private ExecuteStreamHandler buildCommunicationHandler() {
+        return new ProcessCommunicationHandler(MinionOutputStreamHandler::new, MinionInputStreamHandler::new, new SendInitialData(minionArgs), new ReceiveData());
+    }
+
+    private ProcessArgs buildProcessArgs() {
+        if (withDebugger) {
+            return new ProcessArgs(javaExecutableLocation, classPath, debugPort);
+        }
+        return new ProcessArgs(javaExecutableLocation, classPath);
     }
 
     @SuppressWarnings("WeakerAccess")

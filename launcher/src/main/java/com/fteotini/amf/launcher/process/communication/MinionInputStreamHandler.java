@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
-class MinionInputStreamHandler {
+public class MinionInputStreamHandler {
     private final InputStream is;
 
-    MinionInputStreamHandler(final InputStream is) {
+    public MinionInputStreamHandler(final InputStream is) {
         this.is = is;
     }
 

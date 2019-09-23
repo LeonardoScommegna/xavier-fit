@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class ProcessArgs {
+public class ProcessArgs {
     private final Set<Path> launchClasspath;
     private final Path javaExecutable;
 
     private final boolean withDebugger;
     private final Integer debugPort;
 
-    ProcessArgs(Path javaExecutable, Set<Path> launchClasspath) {
+    public ProcessArgs(Path javaExecutable, Set<Path> launchClasspath) {
         this(javaExecutable, launchClasspath, false, null);
     }
 
-    ProcessArgs(Path javaExecutable, Set<Path> launchClasspath, int debugPort) {
+    public ProcessArgs(Path javaExecutable, Set<Path> launchClasspath, int debugPort) {
         this(javaExecutable, launchClasspath, true, debugPort);
     }
 
