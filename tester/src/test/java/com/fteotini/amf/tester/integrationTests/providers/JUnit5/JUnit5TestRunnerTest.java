@@ -49,7 +49,7 @@ class JUnit5TestRunnerTest {
     @Test
     void it_can_run_a_suite() {
         var sut = buildTestRunnerForSubProject();
-        var result = sut.runEntireSuite().getTestContainers();
+        var result = sut.run().getTestContainers();
 
         assertThat(result).hasSize(4);
         assertThat(result.stream().map(TestEntity::getEntityName)).containsExactlyInAnyOrder(
@@ -90,7 +90,7 @@ class JUnit5TestRunnerTest {
     void Given_a_successful_run_then_result_for_With2SkippedAnd1SuccessfulTest_children_is_as_expected() {
         var sut = buildTestRunnerForSubProject();
 
-        var testClass = getTestClassByEntityName(sut.runEntireSuite().getTestContainers(), "With2SkippedAnd1SuccessfulTest");
+        var testClass = getTestClassByEntityName(sut.run().getTestContainers(), "With2SkippedAnd1SuccessfulTest");
 
         assertThat(testClass.getChildren())
                 .hasSize(3)
@@ -117,7 +117,7 @@ class JUnit5TestRunnerTest {
     void Given_a_successful_run_then_result_for_With1FailingAnd1SuccessfulTest_children_is_as_expected() {
         var sut = buildTestRunnerForSubProject();
 
-        var testClass = getTestClassByEntityName(sut.runEntireSuite().getTestContainers(), "With1FailingAnd1SuccessfulTest");
+        var testClass = getTestClassByEntityName(sut.run().getTestContainers(), "With1FailingAnd1SuccessfulTest");
 
         assertThat(testClass.getChildren())
                 .hasSize(2)
@@ -143,7 +143,7 @@ class JUnit5TestRunnerTest {
     void Given_a_successful_run_then_result_for_With2SuccessfulTest_children_is_as_expected() {
         var sut = buildTestRunnerForSubProject();
 
-        var testClass = getTestClassByEntityName(sut.runEntireSuite().getTestContainers(), "With2SuccessfulTest");
+        var testClass = getTestClassByEntityName(sut.run().getTestContainers(), "With2SuccessfulTest");
 
         assertThat(testClass.getChildren()).hasSize(2);
 

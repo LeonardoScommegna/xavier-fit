@@ -1,13 +1,12 @@
 package com.fteotini.amf.launcher.minion;
 
-import com.fteotini.amf.commons.tester.ExecutionSummary.TestExecutionSummary;
 import com.fteotini.amf.launcher.MinionInputStreamHandler;
 import com.fteotini.amf.launcher.MinionOutputStreamHandler;
-import com.fteotini.amf.tester.TestRunner;
+import com.fteotini.amf.tester.TestDiscoveryOptions;
 import com.fteotini.amf.tester.providers.JUnit5.JUnit5TestRunnerFactory;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Set;
 
 public class MinionEntryPoint {
     private final MinionInputStreamHandler inputStreamHandler;
@@ -21,18 +20,20 @@ public class MinionEntryPoint {
     private void run() throws IOException, ClassNotFoundException {
         var args = inputStreamHandler.readObject(MinionArgs.class);
 
-        TestRunner testRunner;
-        TestExecutionSummary testExecutionSummary = null;
-        switch (args.getTestExecutionMode()){
-            case ENTIRE_SUITE:
-                testRunner = new JUnit5TestRunnerFactory().createTestRunner(Collections.emptySet());
-                testExecutionSummary = testRunner.runEntireSuite();
-                break;
-            case SINGLE_METHOD:
-                break;
-        }
+        var testRunner = new JUnit5TestRunnerFactory().createTestRunner(buildDiscoveryOptions(args));
+
+        var testExecutionSummary = testRunner.run();
 
         outputStreamHandler.writeObject(testExecutionSummary);
+    }
+
+    private TestDiscoveryOptions buildDiscoveryOptions(MinionArgs args) {
+        var discoveryOptions = new TestDiscoveryOptions(args.getTestExecutionMode());
+
+        args.getClassNamePatterns().ifPresent(discoveryOptions::withIncludedClassNamePatterns);
+        args.getMethodUnderTest().ifPresent(methodUnderTest -> discoveryOptions.withSelectedMethods(Set.of(methodUnderTest)));
+
+        return discoveryOptions;
     }
 
     public static void main(String[] args) {

@@ -44,8 +44,8 @@ class JUnit5TestRunnerTest {
     }
 
     @Test
-    void When_calling_runEntireSuite_it_should_register_as_listener_TestExecutionSummaryGeneratingListener() {
-        sut.runEntireSuite();
+    void When_calling_run_it_should_register_as_listener_TestExecutionSummaryGeneratingListener() {
+        sut.run();
 
         var listenerCaptor = ArgumentCaptor.forClass(TestExecutionListener.class);
         verify(junitLauncher).registerTestExecutionListeners(listenerCaptor.capture());
@@ -54,27 +54,27 @@ class JUnit5TestRunnerTest {
     }
 
     @Test
-    void When_calling_runEntireSuite_it_should_return_the_return_value_from_the_listener() {
+    void When_calling_run_it_should_return_the_return_value_from_the_listener() {
         var expectedResult = new TestExecutionSummary(Collections.emptySet());
         when(listener.generateTestSuiteOutcome()).thenReturn(expectedResult);
 
-        var result = sut.runEntireSuite();
+        var result = sut.run();
 
         assertThat(result).isEqualTo(expectedResult);
     }
 
     @Test
-    void When_calling_runEntireSuite_it_should_call_the_requestBuilder_and_pass_its_result_to_the_launcher() {
+    void When_calling_run_it_should_call_the_requestBuilder_and_pass_its_result_to_the_launcher() {
         var expected = mock(LauncherDiscoveryRequest.class);
         when(requestBuilder.build()).thenReturn(expected);
 
-        sut.runEntireSuite();
+        sut.run();
 
         verify(junitLauncher).execute(expected);
     }
 
     @Test
-    void When_calling_runEntireSuite_it_should_wrap_the_execution_in_a_function_and_pass_it_to_the_ctxRunner() {
+    void When_calling_run_it_should_wrap_the_execution_in_a_function_and_pass_it_to_the_ctxRunner() {
         var expected = mock(LauncherDiscoveryRequest.class);
         when(requestBuilder.build()).thenReturn(expected);
 
@@ -84,6 +84,6 @@ class JUnit5TestRunnerTest {
             return res;
         }).when(ctxRunner).run(any());
 
-        sut.runEntireSuite();
+        sut.run();
     }
 }

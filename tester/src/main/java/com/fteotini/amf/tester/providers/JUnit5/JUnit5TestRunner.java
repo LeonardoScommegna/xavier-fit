@@ -6,8 +6,6 @@ import com.fteotini.amf.tester.providers.JUnit5.ExecutionSummaryGenerator.TestEx
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.core.LauncherFactory;
 
-import java.lang.reflect.Method;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 class JUnit5TestRunner implements TestRunner {
@@ -26,11 +24,11 @@ class JUnit5TestRunner implements TestRunner {
     }
 
     @Override
-    public TestExecutionSummary runEntireSuite() {
-        return contextualTestRunner.run(this::invokeTestSuite);
+    public TestExecutionSummary run() {
+        return contextualTestRunner.run(this::invokeTests);
     }
 
-    private TestExecutionSummary invokeTestSuite() {
+    private TestExecutionSummary invokeTests() {
         var testExecutionSummaryGeneratingListener = makeListener();
         launcher.registerTestExecutionListeners(testExecutionSummaryGeneratingListener);
 
@@ -42,10 +40,5 @@ class JUnit5TestRunner implements TestRunner {
 
     TestExecutionSummaryGeneratingListener makeListener() {
         return new TestExecutionSummaryGeneratingListener();
-    }
-
-    @Override
-    public <T> TestExecutionSummary runSingleMethod(Class<T> clazz, Function<T, Method> methodSelector) {
-        return null;
     }
 }
