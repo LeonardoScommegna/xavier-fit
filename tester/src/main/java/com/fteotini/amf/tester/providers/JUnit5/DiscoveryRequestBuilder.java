@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.platform.engine.discovery.ClassNameFilter.excludeClassNamePatterns;
 import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
@@ -35,6 +36,10 @@ class DiscoveryRequestBuilder {
 
         if (!options.getIncludedClassNamePatterns().isEmpty()) {
             filters.add(includeClassNamePatterns(options.getIncludedClassNamePatterns().toArray(String[]::new)));
+        }
+
+        if (!options.getExcludedClassNamePatterns().isEmpty()) {
+            filters.add(excludeClassNamePatterns(options.getExcludedClassNamePatterns().toArray(String[]::new)));
         }
 
         return filters.toArray(Filter[]::new);

@@ -72,6 +72,20 @@ class DiscoveryRequestBuilderTest {
     }
 
     @Test
+    void Given_an_option_obj_with_excluded_className_patterns_then_the_built_DiscoveryRequest_should_contain_the_right_filters() {
+        var options = new TestDiscoveryOptions(ENTIRE_SUITE)
+                .withExcludedClassNamePatterns(Set.of("one$"));
+
+        var result = new DiscoveryRequestBuilder(options).build();
+        
+        var filters = result.getFiltersByType(ClassNameFilter.class);
+        assertThat(filters).hasSize(2);
+
+        var excludedPatterns = filters.get(1);
+        assertThat(excludedPatterns.toPredicate()).accepts("torrone");
+    }
+
+    @Test
     @Disabled("should be useless by now")
     void Given_an_empty_suite_option_obj_then_it_should_build_the_right_DiscoveryRequest() {
         var result = new DiscoveryRequestBuilder(new TestDiscoveryOptions(ENTIRE_SUITE)).build();
