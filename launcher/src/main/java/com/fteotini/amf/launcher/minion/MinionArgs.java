@@ -11,32 +11,43 @@ public class MinionArgs implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final TestExecutionMode testExecutionMode;
-    private final Set<String> classNamePatterns;
     private final MethodUnderTest methodUnderTest;
 
-    private MinionArgs(TestExecutionMode testExecutionMode, Set<String> classNamePatterns, MethodUnderTest methodUnderTest) {
+    private final Set<String> classNamePatterns;
+    private final Set<String> packageNames;
+
+    private MinionArgs(TestExecutionMode testExecutionMode, Set<String> classNamePatterns, Set<String> packageNames, MethodUnderTest methodUnderTest) {
         this.testExecutionMode = testExecutionMode;
         this.classNamePatterns = classNamePatterns;
+        this.packageNames = packageNames;
         this.methodUnderTest = methodUnderTest;
     }
 
     public static MinionArgs ForSingleMethod(MethodUnderTest methodUnderTest) {
-        return new MinionArgs(TestExecutionMode.SINGLE_METHOD, null, methodUnderTest);
+        return new MinionArgs(TestExecutionMode.SINGLE_METHOD, null, null, methodUnderTest);
     }
 
-    public static MinionArgs ForEntireSuite(Set<String> classNamePatterns) {
-        return new MinionArgs(TestExecutionMode.ENTIRE_SUITE, classNamePatterns, null);
+    public static MinionArgs ForEntireSuite(Set<String> classNamePatterns, Set<String> packageNames) {
+        return new MinionArgs(TestExecutionMode.ENTIRE_SUITE, classNamePatterns, packageNames, null);
     }
 
-    public TestExecutionMode getTestExecutionMode() {
+    public static MinionArgs ForEntireSuite() {
+        return new MinionArgs(TestExecutionMode.ENTIRE_SUITE, null, null, null);
+    }
+
+    TestExecutionMode getTestExecutionMode() {
         return testExecutionMode;
     }
 
-    public Optional<Set<String>> getClassNamePatterns() {
+    Optional<Set<String>> getClassNamePatterns() {
         return Optional.ofNullable(classNamePatterns);
     }
 
-    public Optional<MethodUnderTest> getMethodUnderTest() {
+    Optional<MethodUnderTest> getMethodUnderTest() {
         return Optional.ofNullable(methodUnderTest);
+    }
+
+    Optional<Set<String>> getPackageNames() {
+        return Optional.ofNullable(packageNames);
     }
 }

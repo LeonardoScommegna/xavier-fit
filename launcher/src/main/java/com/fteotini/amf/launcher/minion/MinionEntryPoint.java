@@ -31,6 +31,7 @@ public class MinionEntryPoint {
         var discoveryOptions = new TestDiscoveryOptions(args.getTestExecutionMode());
 
         args.getClassNamePatterns().ifPresent(discoveryOptions::withIncludedClassNamePatterns);
+        args.getPackageNames().ifPresent(discoveryOptions::withIncludedPackageNames);
         args.getMethodUnderTest().ifPresent(methodUnderTest -> discoveryOptions.withSelectedMethods(Set.of(methodUnderTest)));
 
         return discoveryOptions;
