@@ -3,7 +3,6 @@ package com.fteotini.amf.tester.providers.JUnit5;
 import com.fteotini.amf.commons.tester.MethodUnderTest;
 import com.fteotini.amf.commons.tester.TestExecutionMode;
 import com.fteotini.amf.tester.TestDiscoveryOptions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +10,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.platform.engine.discovery.ClassNameFilter;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -74,7 +74,7 @@ class DiscoveryRequestBuilderTest {
     @Test
     void Given_an_option_obj_with_excluded_className_patterns_then_the_built_DiscoveryRequest_should_contain_the_right_filters() {
         var options = new TestDiscoveryOptions(ENTIRE_SUITE)
-                .withExcludedClassNamePatterns(Set.of("one$"));
+                .withExcludedClassNamePatterns(Set.of(".*ful$"));
 
         var result = new DiscoveryRequestBuilder(options).build();
         
@@ -82,19 +82,37 @@ class DiscoveryRequestBuilderTest {
         assertThat(filters).hasSize(2);
 
         var excludedPatterns = filters.get(1);
-        assertThat(excludedPatterns.toPredicate()).accepts("torrone");
+        assertThat(excludedPatterns.toPredicate()).rejects("stressful");
     }
 
     @Test
-    @Disabled("should be useless by now")
-    void Given_an_empty_suite_option_obj_then_it_should_build_the_right_DiscoveryRequest() {
-        var result = new DiscoveryRequestBuilder(new TestDiscoveryOptions(ENTIRE_SUITE)).build();
+    void Given_an_option_obj_with_included_packageName_then_the_built_DiscoveryRequest_should_contain_the_right_filters() {
+        var options = new TestDiscoveryOptions(ENTIRE_SUITE)
+                .withIncludedPackageNames(Set.of("org.dummy.pkg", "com.pkg"));
 
-        var classSelectors = result.getSelectorsByType(ClasspathRootSelector.class);
-        assertThat(classSelectors).isEmpty();
+        var result = new DiscoveryRequestBuilder(options).build();
 
-        var patternFilters = result.getFiltersByType(ClassNameFilter.class);
-        assertThat(patternFilters).isEmpty();
+        var filters = result.getFiltersByType(PackageNameFilter.class);
+        assertThat(filters)
+                .hasSize(1)
+                .hasOnlyOneElementSatisfying(f -> {
+                    assertThat(f.toPredicate()).accepts("org.dummy.pkg").accepts("com.pkg").rejects("asdhaiwsdjhajnd");
+                });
+    }
+
+    @Test
+    void Given_an_option_obj_with_excluded_packageName_then_the_built_DiscoveryRequest_should_contain_the_right_filters() {
+        var options = new TestDiscoveryOptions(ENTIRE_SUITE)
+                .withExcludedPackageNames(Set.of("org.dummy.pkg", "com.pkg"));
+
+        var result = new DiscoveryRequestBuilder(options).build();
+
+        var filters = result.getFiltersByType(PackageNameFilter.class);
+        assertThat(filters)
+                .hasSize(1)
+                .hasOnlyOneElementSatisfying(f -> {
+                    assertThat(f.toPredicate()).accepts("everything").rejects("org.dummy.pkg", "com.pkg");
+                });
     }
 
     static class DummyTestClass {

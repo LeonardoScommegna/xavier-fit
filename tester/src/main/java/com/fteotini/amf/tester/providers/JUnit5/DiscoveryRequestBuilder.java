@@ -4,21 +4,24 @@ import com.fteotini.amf.commons.tester.TestExecutionMode;
 import com.fteotini.amf.tester.TestDiscoveryOptions;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.Filter;
+import org.junit.platform.engine.discovery.ClassNameFilter;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.platform.engine.discovery.ClassNameFilter.excludeClassNamePatterns;
-import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
 class DiscoveryRequestBuilder {
     private TestDiscoveryOptions options;
+    private final List<Filter<?>> filters = new ArrayList<>();
 
     DiscoveryRequestBuilder(TestDiscoveryOptions options) {
         this.options = options;
@@ -32,15 +35,11 @@ class DiscoveryRequestBuilder {
     }
 
     private Filter<?>[] buildFilters() {
-        List<Filter<?>> filters = new ArrayList<>();
+        addFilterSet(options.getIncludedClassNamePatterns(), ClassNameFilter::includeClassNamePatterns);
+        addFilterSet(options.getExcludedClassNamePatterns(), ClassNameFilter::excludeClassNamePatterns);
 
-        if (!options.getIncludedClassNamePatterns().isEmpty()) {
-            filters.add(includeClassNamePatterns(options.getIncludedClassNamePatterns().toArray(String[]::new)));
-        }
-
-        if (!options.getExcludedClassNamePatterns().isEmpty()) {
-            filters.add(excludeClassNamePatterns(options.getExcludedClassNamePatterns().toArray(String[]::new)));
-        }
+        addFilterSet(options.getIncludedPackageNames(), PackageNameFilter::includePackageNames);
+        addFilterSet(options.getExcludedPackageNames(), PackageNameFilter::excludePackageNames);
 
         return filters.toArray(Filter[]::new);
     }
@@ -59,5 +58,11 @@ class DiscoveryRequestBuilder {
         }
 
         return selectors;
+    }
+
+    private <T extends Filter<?>> void addFilterSet(Set<String> filterSet, Function<String[], T> filterFunction) {
+        if (!filterSet.isEmpty()) {
+            filters.add(filterFunction.apply(filterSet.toArray(String[]::new)));
+        }
     }
 }

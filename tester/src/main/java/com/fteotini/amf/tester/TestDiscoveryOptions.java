@@ -20,8 +20,8 @@ public class TestDiscoveryOptions {
     // filters
     private Set<String> includedClassNamePatterns = singleton(DEFAULT_CLASS_PATTERNS);
     private Set<String> excludedClassNamePatterns = emptySet();
-    /*private Set<String> includedPackageNames = emptySet();
-    private Set<String> excludedPackageNames = emptySet();*/
+    private Set<String> includedPackageNames = emptySet();
+    private Set<String> excludedPackageNames = emptySet();
 
     public TestDiscoveryOptions(TestExecutionMode testExecutionMode) {
         this.testExecutionMode = testExecutionMode;
@@ -50,7 +50,7 @@ public class TestDiscoveryOptions {
         return this;
     }
 
-    /*public TestDiscoveryOptions withIncludedPackageNames(Set<String> includedPackageNames) {
+    public TestDiscoveryOptions withIncludedPackageNames(Set<String> includedPackageNames) {
         this.includedPackageNames = includedPackageNames;
         return this;
     }
@@ -58,7 +58,7 @@ public class TestDiscoveryOptions {
     public TestDiscoveryOptions withExcludedPackageNames(Set<String> excludedPackageNames) {
         this.excludedPackageNames = excludedPackageNames;
         return this;
-    }*/
+    }
 
     public TestExecutionMode getTestExecutionMode() {
         return testExecutionMode;
@@ -72,13 +72,13 @@ public class TestDiscoveryOptions {
         return excludedClassNamePatterns;
     }
 
-    /*public Set<String> getIncludedPackageNames() {
+    public Set<String> getIncludedPackageNames() {
         return includedPackageNames;
     }
 
     public Set<String> getExcludedPackageNames() {
         return excludedPackageNames;
-    }*/
+    }
 
     public Set<Path> getAdditionalClassPaths() {
         return additionalClassPaths;
