@@ -10,12 +10,14 @@ public class MethodUnderTest implements Serializable {
     private static final long serialVersionUID = 42L;
 
     private final Class<?> belongingClass;
-    private final Method method;
+    private final String methodSimpleName;
+    private final Class<?>[] methodParamTypes;
 
     public MethodUnderTest(final Class<?> belongingClass, final Method method) {
         Preconditions.checkArgument(methodBelongsToClass(method, belongingClass), "The provided method does not belong to the provided class");
         this.belongingClass = belongingClass;
-        this.method = method;
+        this.methodSimpleName = method.getName();
+        this.methodParamTypes = method.getParameterTypes();
     }
 
     public Class<?> getBelongingClass() {
@@ -23,6 +25,11 @@ public class MethodUnderTest implements Serializable {
     }
 
     public Method getMethod() {
+        Method method = null;
+        try {
+            method = belongingClass.getDeclaredMethod(methodSimpleName, methodParamTypes);
+        } catch (NoSuchMethodException ignored) {
+        }
         return method;
     }
 

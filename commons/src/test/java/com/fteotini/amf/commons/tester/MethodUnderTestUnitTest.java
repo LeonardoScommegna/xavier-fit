@@ -27,6 +27,14 @@ class MethodUnderTestUnitTest {
                 .withMessage("The provided method does not belong to the provided class");
     }
 
+    @Test
+    void Given_a_method_it_should_be_able_to_retrieve_it() throws NoSuchMethodException {
+        var method = Dummy.class.getDeclaredMethod("hello");
+        var sut = new MethodUnderTest(Dummy.class, method);
+
+        assertThat(sut.getMethod()).isEqualTo(method);
+    }
+
     static class Dummy {
         void hello() {
         }
