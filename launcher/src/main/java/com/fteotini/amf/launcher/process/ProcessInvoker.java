@@ -26,11 +26,14 @@ public class ProcessInvoker {
         this.processExecutorSupplier = processExecutorSupplier;
     }
 
-    Future<ProcessResult> startMinionProcess() throws IOException {
+    public Future<ProcessResult> startMinionProcess() throws IOException {
         var command = getArgsList();
         return processExecutorSupplier.get()
                 .command(command)
+                //TODO: maybe not? or maybe don't redirect the error stream to the global system err
+                .redirectErrorStream(false)
                 .streams(processCommunicationHandler)
+                .destroyOnExit()
                 .start()
                 .getFuture();
     }

@@ -45,6 +45,13 @@ class ProcessInvokerTest {
     }
 
     @Test
+    void When_startMinionProcess_then_it_should_set_the_forked_jvm_to_be_destroyed_on_vm_exit() throws IOException {
+        sut.startMinionProcess();
+
+        verify(processExecutor).destroyOnExit();
+    }
+
+    @Test
     void Given_a_processArgs_obj_then_it_should_build_the_command_correctly() throws IOException {
         var command = List.of("foo","bar");
         when(processArgs.buildArgsList()).thenReturn(command);
