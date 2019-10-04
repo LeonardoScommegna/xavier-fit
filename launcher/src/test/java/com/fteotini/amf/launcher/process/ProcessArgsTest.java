@@ -26,7 +26,7 @@ class ProcessArgsTest {
 
         assertThat(result).hasSize(3);
         assertThat(result.get(0)).endsWith(stringPath("exec"));
-        assertThat(result.get(1)).isEqualTo("-cl");
+        assertThat(result.get(1)).isEqualTo("-cp");
 
         assertThat(result.get(2).split(File.pathSeparator))
                 .hasSize(2)

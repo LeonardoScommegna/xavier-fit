@@ -56,7 +56,7 @@ public class ProcessArgs {
     }
 
     private String debugArgument() {
-        return "-agentlib:jdwp=transport=dt_socket,server=n,address=0.0.0.0:" + debugPort + ",suspend=y";
+        return "-agentlib:jdwp=transport=dt_socket,server=n,address=localhost:" + debugPort + ",suspend=y";
     }
 
     private List<String> classPathArgs() {
@@ -67,6 +67,6 @@ public class ProcessArgs {
                 .map(ProcessArgs::getAbsolutePathAsString)
                 .collect(Collectors.joining(File.pathSeparator));
 
-        return List.of("-cl", classPathString);
+        return List.of("-cp", classPathString);
     }
 }
