@@ -1,10 +1,13 @@
 package com.fteotini.amf.commons.tester.ExecutionSummary;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-public final class TestEntity {
+public final class TestEntity implements Serializable {
+    private static final long serialVersionUID = 42L;
+
     private final String entityName;
     private final TestEntityType type;
     private final ExecutionResult result;
