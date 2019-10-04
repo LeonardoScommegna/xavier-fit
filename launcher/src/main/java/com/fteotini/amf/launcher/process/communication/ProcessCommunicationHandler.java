@@ -10,12 +10,16 @@ import java.io.OutputStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+//TODO: maybe it's better to handle each stream in a separate thread
 public class ProcessCommunicationHandler implements ExecuteStreamHandler {
 
     private final Function<OutputStream, MinionOutputStreamHandler> outputStreamHandlerFactory;
     private final Function<InputStream, MinionInputStreamHandler> inputStreamHandlerFactory;
     private final Consumer<MinionOutputStreamHandler> sendInitialData;
     private final Consumer<MinionInputStreamHandler> receiveData;
+    private OutputStream processOutputStream;
+    private InputStream processInputStream;
+    private InputStream processErrorStream;
 
     public ProcessCommunicationHandler(Function<OutputStream, MinionOutputStreamHandler> outputStreamHandlerFactory,
                                        Function<InputStream, MinionInputStreamHandler> inputStreamHandlerFactory,
@@ -29,25 +33,41 @@ public class ProcessCommunicationHandler implements ExecuteStreamHandler {
     }
 
     @Override
-    public void setProcessInputStream(OutputStream os) throws IOException {
-        sendInitialData.accept(outputStreamHandlerFactory.apply(os));
+    public void setProcessInputStream(OutputStream os) {
+        processOutputStream = os;
     }
 
     @Override
-    public void setProcessErrorStream(InputStream is) throws IOException {
+    public void setProcessErrorStream(InputStream is) {
+        processErrorStream = is;
     }
 
     @Override
-    public void setProcessOutputStream(InputStream is) throws IOException {
-        receiveData.accept(inputStreamHandlerFactory.apply(is));
+    public void setProcessOutputStream(InputStream is) {
+        processInputStream = is;
     }
 
     @Override
     public void start() throws IOException {
+        if (processOutputStream != null)
+            sendInitialData.accept(outputStreamHandlerFactory.apply(this.processOutputStream));
+        if (processErrorStream != null)
+            handleErr(processErrorStream);
+        if (processInputStream != null)
+            receiveData.accept(inputStreamHandlerFactory.apply(this.processInputStream));
     }
 
     @Override
     public void stop() {
 
+    }
+
+    private static void handleErr(InputStream processErrorStream) throws IOException {
+        int length;
+        var buf = new byte[1024];
+        while ((length = processErrorStream.read(buf)) > 0) {
+            System.err.write(buf, 0, length);
+            System.err.flush();
+        }
     }
 }

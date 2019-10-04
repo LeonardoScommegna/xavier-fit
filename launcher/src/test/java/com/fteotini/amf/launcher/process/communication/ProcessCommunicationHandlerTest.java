@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+//TODO: decide how to handle error stream
 @Tag("UnitTest")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
@@ -28,7 +29,7 @@ class ProcessCommunicationHandlerTest {
     private MinionInputStreamHandler inputStreamHandler;
 
     @Test
-    void Given_an_outputStreamHandlerFactory_then_calling_setProcessInputStream_should_call_it_and_pass_its_result_to_sendData_consumer() throws IOException {
+    void Given_an_outputStreamHandlerFactory_then_calling_start_should_call_it_and_pass_its_result_to_sendData_consumer() throws IOException {
         var ref = new Object() {
             int assertionsCount = 0;
         };
@@ -48,12 +49,13 @@ class ProcessCommunicationHandlerTest {
         });
 
         sut.setProcessInputStream(arg);
+        sut.start();
 
         assertThat(ref.assertionsCount).isEqualTo(2);
     }
 
     @Test
-    void Given_an_inputStreamHandlerFactory_then_calling_setProcessOutputStream_should_call_it_and_pass_its_result_to_receiveData_consumer() throws IOException {
+    void Given_an_inputStreamHandlerFactory_then_calling_start_should_call_it_and_pass_its_result_to_receiveData_consumer() throws IOException {
         var ref = new Object() {
             int assertionsCount = 0;
         };
@@ -73,6 +75,7 @@ class ProcessCommunicationHandlerTest {
         }, receiveDataFunc);
 
         sut.setProcessOutputStream(arg);
+        sut.start();
 
         assertThat(ref.assertionsCount).isEqualTo(2);
     }
