@@ -1,9 +1,9 @@
 package com.fteotini.amf.commons.tester.ExecutionSummary;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 public final class TestEntity implements Serializable {
     private static final long serialVersionUID = 42L;
@@ -13,26 +13,26 @@ public final class TestEntity implements Serializable {
     private final ExecutionResult result;
     private final String skipReason;
     private final Throwable exception;
-    private final Collection<TestEntity> children;
+    private final Set<TestEntity> children;
 
-    private TestEntity(String entityName, TestEntityType type, ExecutionResult result, String skipReason, Throwable exception, Collection<TestEntity> children) {
+    private TestEntity(String entityName, TestEntityType type, ExecutionResult result, String skipReason, Throwable exception, Set<TestEntity> children) {
         this.entityName = entityName;
         this.type = type;
         this.result = result;
         this.skipReason = skipReason;
         this.exception = exception;
-        this.children = children != null ? Collections.unmodifiableCollection(children) : Collections.unmodifiableCollection(Collections.emptyList());
+        this.children = children != null ? Set.copyOf(children) : Collections.emptySet();
     }
 
-    public static TestEntity Success(String entityName, TestEntityType type, Collection<TestEntity> children) {
+    public static TestEntity Success(String entityName, TestEntityType type, Set<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Success,null, null, children);
     }
 
-    public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception, Collection<TestEntity> children) {
+    public static TestEntity Failure(String entityName, TestEntityType type, Throwable exception, Set<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Failure,null, exception, children);
     }
 
-    public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason, Collection<TestEntity> children) {
+    public static TestEntity Skipped(String entityName, TestEntityType type, String skipReason, Set<TestEntity> children) {
         return new TestEntity(entityName,type,ExecutionResult.Skipped,skipReason, null, children);
     }
 
@@ -44,7 +44,7 @@ public final class TestEntity implements Serializable {
         return type;
     }
 
-    public Collection<TestEntity> getChildren() {
+    public Set<TestEntity> getChildren() {
         return children;
     }
 
