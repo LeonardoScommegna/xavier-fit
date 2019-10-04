@@ -15,7 +15,7 @@ public class ProcessArgs {
     private final Path javaExecutable;
 
     private final boolean withDebugger;
-    private final Integer debugPort;
+    private final int debugPort;
 
     public ProcessArgs(Path javaExecutable, Set<Path> launchClasspath) {
         this(javaExecutable, launchClasspath, false, null);
@@ -31,8 +31,12 @@ public class ProcessArgs {
 
         this.withDebugger = withDebugger;
 
-        Preconditions.checkArgument(debugPort == null || (debugPort >= 1024 && debugPort <= 65535), "'debugPort' value [%d] is not in the valid range", debugPort);
-        this.debugPort = debugPort;
+        if (debugPort != null) {
+            Preconditions.checkArgument(debugPort >= 1024 && debugPort <= 65535, "'debugPort' value [%d] is not in the valid range", debugPort);
+            this.debugPort = debugPort;
+        } else {
+            this.debugPort = -1;
+        }
     }
 
     List<String> buildArgsList() {
