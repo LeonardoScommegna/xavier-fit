@@ -1,6 +1,7 @@
 package com.fteotini.amf.tester.providers.JUnit5;
 
 import com.fteotini.amf.commons.tester.TestExecutionMode;
+import com.fteotini.amf.commons.util.ClassPathResolver;
 import com.fteotini.amf.tester.TestDiscoveryOptions;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.Filter;
@@ -9,10 +10,7 @@ import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,8 +45,8 @@ class DiscoveryRequestBuilder {
     private List<? extends DiscoverySelector> buildSelectors() {
         List<? extends DiscoverySelector> selectors = Collections.emptyList();
 
-        if (!options.getAdditionalClassPaths().isEmpty() && options.getTestExecutionMode() == TestExecutionMode.ENTIRE_SUITE) {
-            selectors = selectClasspathRoots(options.getAdditionalClassPaths());
+        if (options.getTestExecutionMode() == TestExecutionMode.ENTIRE_SUITE) {
+            selectors = createClasspathRootSelectors();
         }
 
         if (!options.getSelectedMethods().isEmpty() && options.getTestExecutionMode() == TestExecutionMode.SINGLE_METHOD) {
@@ -58,6 +56,14 @@ class DiscoveryRequestBuilder {
         }
 
         return selectors;
+    }
+
+    private List<? extends DiscoverySelector> createClasspathRootSelectors() {
+        var classpath = new HashSet<>(new ClassPathResolver().getClassPaths());
+        if (!options.getAdditionalClassPaths().isEmpty())
+            classpath.addAll(options.getAdditionalClassPaths());
+
+        return selectClasspathRoots(classpath);
     }
 
     private <T extends Filter<?>> void addFilterSet(Set<String> filterSet, Function<String[], T> filterFunction) {

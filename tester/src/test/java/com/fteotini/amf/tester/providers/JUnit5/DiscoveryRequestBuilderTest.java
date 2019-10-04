@@ -12,7 +12,10 @@ import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.discovery.PackageNameFilter;
 
+import java.io.File;
+import java.net.URI;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Set;
 
 import static com.fteotini.amf.commons.tester.TestExecutionMode.ENTIRE_SUITE;
@@ -32,7 +35,6 @@ class DiscoveryRequestBuilderTest {
         var result = new DiscoveryRequestBuilder(options).build();
 
         var classSelectors = result.getSelectorsByType(ClasspathRootSelector.class);
-        assertThat(classSelectors).hasSize(2);
         assertThat(classSelectors).anySatisfy(selector -> assertThat(selector.getClasspathRoot().toString()).endsWith("src/main/"));
         assertThat(classSelectors).anySatisfy(selector -> assertThat(selector.getClasspathRoot().toString()).endsWith("src/test/"));
 
@@ -77,7 +79,7 @@ class DiscoveryRequestBuilderTest {
                 .withExcludedClassNamePatterns(Set.of(".*ful$"));
 
         var result = new DiscoveryRequestBuilder(options).build();
-        
+
         var filters = result.getFiltersByType(ClassNameFilter.class);
         assertThat(filters).hasSize(2);
 
@@ -113,6 +115,26 @@ class DiscoveryRequestBuilderTest {
                 .hasOnlyOneElementSatisfying(f -> {
                     assertThat(f.toPredicate()).accepts("everything").rejects("org.dummy.pkg", "com.pkg");
                 });
+    }
+
+    @Test
+    void Given_an_option_obj_for_entire_suite_then_the_classPathRootSelector_must_contain_the_current_classPath() {
+        var currentClassPath = currentClassPath();
+        var options = new TestDiscoveryOptions(ENTIRE_SUITE);
+
+        var result = new DiscoveryRequestBuilder(options).build();
+
+        var classSelectors = result.getSelectorsByType(ClasspathRootSelector.class);
+
+        assertThat(classSelectors).hasSizeGreaterThanOrEqualTo(currentClassPath.length);
+        assertThat(classSelectors)
+                .extracting(ClasspathRootSelector::getClasspathRoot)
+                .contains(currentClassPath);
+    }
+
+    private static URI[] currentClassPath() {
+        return Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
+                .map(str -> Path.of(str).toUri()).toArray(URI[]::new);
     }
 
     static class DummyTestClass {
