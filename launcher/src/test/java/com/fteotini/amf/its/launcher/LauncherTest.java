@@ -1,6 +1,7 @@
 package com.fteotini.amf.its.launcher;
 
 import com.fteotini.amf.commons.tester.ExecutionSummary.ExecutionResult;
+import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntity;
 import com.fteotini.amf.commons.tester.ExecutionSummary.TestEntityType;
 import com.fteotini.amf.commons.tester.MethodUnderTest;
 import com.fteotini.amf.its.launcher.DONTRUN.DummyTest;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,11 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("IntegrationTest")
 class LauncherTest {
     @Test
-    void it_can_launch_the_tests_in_a_forked_jvm() throws NoSuchMethodException, IOException, ExecutionException, InterruptedException {
+    void it_can_launch_a_single_test_in_a_forked_jvm() throws NoSuchMethodException, IOException, ExecutionException, InterruptedException {
         var args = MinionArgs.ForSingleMethod(new MethodUnderTest(DummyTest.class, DummyTest.class.getDeclaredMethod("it_is_green")));
 
         var minionResult = new MinionProcessBuilder(args)
-                //.withDebugger(50005)
                 .start()
                 .get();
 
@@ -40,5 +42,46 @@ class LauncherTest {
                     assertThat(t.getResult()).isEqualTo(ExecutionResult.Success);
                     assertThat(t.getType()).isEqualTo(TestEntityType.Method);
                 });
+    }
+
+    @Test
+    void it_can_run_a_suite_in_a_forked_jvm() throws IOException, ExecutionException, InterruptedException {
+        var args = MinionArgs.ForEntireSuite(null, Set.of("com.fteotini.amf.its.launcher.DONTRUN"));
+        var minionResult = new MinionProcessBuilder(args)
+                .start()
+                .get();
+
+        assertThat(minionResult.getProcessResult().getExitValue()).isEqualTo(0);
+
+        var classesUnderTest = minionResult.getTestExecutionSummary().getTestContainers();
+        assertThat(classesUnderTest)
+                .hasSize(2)
+                .extracting(TestEntity::getEntityName).containsExactlyInAnyOrder("DummyTest", "Dummy2Test");
+
+        var dummyTest = getTestEntityByName(classesUnderTest, "DummyTest");
+        assertThat(dummyTest.map(TestEntity::getChildren).get())
+                .hasSize(1)
+                .hasOnlyOneElementSatisfying(t -> {
+                    assertThat(t.getEntityName()).isEqualTo("it_is_green()");
+                    assertThat(t.getResult()).isEqualTo(ExecutionResult.Success);
+                    assertThat(t.getType()).isEqualTo(TestEntityType.Method);
+                });
+
+        var dummy2Test = getTestEntityByName(classesUnderTest, "Dummy2Test");
+        assertThat(dummy2Test.map(TestEntity::getChildren).get())
+                .hasSize(2)
+                .anySatisfy(t -> {
+                    assertThat(t.getEntityName()).isEqualTo("it_passes()");
+                    assertThat(t.getResult()).isEqualTo(ExecutionResult.Success);
+                })
+                .anySatisfy(t -> {
+                    assertThat(t.getEntityName()).isEqualTo("It_Fails()");
+                    assertThat(t.getResult()).isEqualTo(ExecutionResult.Failure);
+                    assertThat(t.getException()).isNotEmpty();
+                });
+    }
+
+    private Optional<TestEntity> getTestEntityByName(Set<TestEntity> testEntities, String entityName) {
+        return testEntities.stream().filter(e -> e.getEntityName().equals(entityName)).findFirst();
     }
 }
