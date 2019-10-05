@@ -177,7 +177,8 @@ class JUnit5TestRunnerTest {
 
     private TestRunner buildTestRunnerForSubProject() {
         var options = new TestDiscoveryOptions(TestExecutionMode.ENTIRE_SUITE)
-                .withAdditionalClassPaths(Set.of(getProjectClassPath()));
+                .withAdditionalClassPaths(Set.of(getProjectClassPath()))
+                .withIncludedPackageNames(Collections.singleton("src.test.java.it"));
         return testRunnerFactory.createTestRunner(options);
     }
 

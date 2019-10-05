@@ -1,4 +1,4 @@
-package it;
+package src.test.java.it;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
