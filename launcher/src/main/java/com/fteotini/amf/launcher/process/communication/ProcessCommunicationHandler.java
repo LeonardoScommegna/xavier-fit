@@ -14,7 +14,6 @@ import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-//TODO: maybe it's better to handle each stream in a separate thread
 public class ProcessCommunicationHandler implements ExecuteStreamHandler {
     private static final Logger log = LoggerFactory.getLogger(ProcessCommunicationHandler.class);
 

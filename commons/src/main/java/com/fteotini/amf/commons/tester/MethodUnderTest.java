@@ -9,25 +9,29 @@ import java.util.Arrays;
 public class MethodUnderTest implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private final Class<?> belongingClass;
+    private final String belongingClassName;
     private final String methodSimpleName;
     private final Class<?>[] methodParamTypes;
 
     public MethodUnderTest(final Class<?> belongingClass, final Method method) {
         Preconditions.checkArgument(methodBelongsToClass(method, belongingClass), "The provided method does not belong to the provided class");
-        this.belongingClass = belongingClass;
+        this.belongingClassName = belongingClass.getTypeName();
         this.methodSimpleName = method.getName();
         this.methodParamTypes = method.getParameterTypes();
     }
 
-    public Class<?> getBelongingClass() {
-        return belongingClass;
+    public final Class<?> getBelongingClass() {
+        try {
+            return Class.forName(belongingClassName);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Method getMethod() {
+    public final Method getMethod() {
         Method method = null;
         try {
-            method = belongingClass.getDeclaredMethod(methodSimpleName, methodParamTypes);
+            method = getBelongingClass().getDeclaredMethod(methodSimpleName, methodParamTypes);
         } catch (NoSuchMethodException ignored) {
         }
         return method;

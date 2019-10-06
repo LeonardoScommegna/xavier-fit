@@ -35,6 +35,14 @@ class MethodUnderTestUnitTest {
         assertThat(sut.getMethod()).isEqualTo(method);
     }
 
+    @Test
+    void Given_a_class_it_should_be_able_to_retrieve_it() throws NoSuchMethodException {
+        var belongingClass = Dummy.class;
+        var sut = new MethodUnderTest(belongingClass, belongingClass.getDeclaredMethod("hello"));
+
+        assertThat(sut.getBelongingClass()).isEqualTo(belongingClass);
+    }
+
     static class Dummy {
         void hello() {
         }
