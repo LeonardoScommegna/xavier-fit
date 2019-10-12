@@ -1,5 +1,9 @@
 package com.fteotini.amf.mutator;
 
+import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
+import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
+import com.fteotini.amf.mutator.MutationIdentifiers.MethodIdentifier;
+
 import java.util.Optional;
 
 public final class MutationDetails {

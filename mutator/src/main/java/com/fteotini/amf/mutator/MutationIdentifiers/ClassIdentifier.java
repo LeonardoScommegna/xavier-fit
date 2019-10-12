@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator;
+package com.fteotini.amf.mutator.MutationIdentifiers;
 
 public class ClassIdentifier {
     private final String fullName;

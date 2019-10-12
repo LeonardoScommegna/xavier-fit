@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.operatorTestEntities;
+package com.fteotini.amf.mutator.Operators.operatorTestEntities;
 
 public class DummyClass3 {
     @DummyAnnotation

@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator;
+package com.fteotini.amf.mutator.MutationIdentifiers;
 
 public class MethodIdentifier {
     private final String methodSimpleName;

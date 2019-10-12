@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.operatorTestEntities;
+package com.fteotini.amf.mutator.Operators.operatorTestEntities;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
