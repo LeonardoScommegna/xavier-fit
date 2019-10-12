@@ -11,6 +11,7 @@
         <module>tester</module>
         <module>launcher</module>
         <module>commons</module>
+        <module>mutator</module>
     </modules>
 
     <name>annotation.mutation.framework</name>
@@ -121,6 +122,7 @@
                         <systemPropertyVariables>
                             <surefire.version>${surefire.version}</surefire.version>
                             <compiler.version>${compiler.version}</compiler.version>
+                            <!--suppress UnresolvedMavenProperty -->
                             <maven.home>${maven.home}</maven.home>
                             <!--            <buildDirectory>${project.build.directory}</buildDirectory>-->
                         </systemPropertyVariables>
