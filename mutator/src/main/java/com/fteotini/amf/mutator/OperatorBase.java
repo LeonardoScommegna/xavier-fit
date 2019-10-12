@@ -3,6 +3,7 @@ package com.fteotini.amf.mutator;
 import io.github.classgraph.ScanResult;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ abstract class OperatorBase implements Operator {
                         .filter(classInfo -> classInfo.hasAnnotation(targetAnnotationName()))
                         .getNames()
                         .stream()
-                        .map(className -> new MutationDetails(className, operatorTarget))
+                        .map(MutationDetails::ForClass)
                         .collect(Collectors.toUnmodifiableSet());
             case Method:
                 return classes
@@ -26,7 +27,7 @@ abstract class OperatorBase implements Operator {
                         .stream()
                         .flatMap(classInfo -> classInfo.getMethodAndConstructorInfo().stream())
                         .filter(methodInfo -> methodInfo.hasAnnotation(targetAnnotationName()))
-                        .map(methodInfo -> new MutationDetails(methodInfo.toString(), operatorTarget))
+                        .map(methodInfo -> MutationDetails.ForMethod(methodInfo.getName(), Arrays.stream(methodInfo.getParameterInfo()).map(x -> x.getTypeDescriptor().toString()).toArray(String[]::new), methodInfo.getClassInfo().getName()))
                         .collect(Collectors.toUnmodifiableSet());
             case Field:
                 return classes
@@ -34,7 +35,7 @@ abstract class OperatorBase implements Operator {
                         .stream()
                         .flatMap(classInfo -> classInfo.getFieldInfo().stream())
                         .filter(fieldInfo -> fieldInfo.hasAnnotation(targetAnnotationName()))
-                        .map(fieldInfo -> new MutationDetails(fieldInfo.getName(), operatorTarget))
+                        .map(fieldInfo -> MutationDetails.ForField(fieldInfo.getName(), fieldInfo.getClassInfo().getName()))
                         .collect(Collectors.toUnmodifiableSet());
             default:
                 throw new IllegalStateException("Unexpected value: " + operatorTarget());
