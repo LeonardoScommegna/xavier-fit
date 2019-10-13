@@ -10,15 +10,22 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
 
-abstract class OperatorBase<T extends Identifier> implements Operator, AutoCloseable, Closeable {
+abstract class OperatorBase<T extends Identifier, K extends AsmVisitorWrapper> implements Operator, AutoCloseable, Closeable {
     private final ByteBuddy byteBuddy;
     private final ClassReloadingStrategy classLoadingStrategy;
 
     private Class<?> mutantClass;
 
     OperatorBase(final ByteBuddy byteBuddy) {
+        this(byteBuddy, ClassReloadingStrategy.fromInstalledAgent());
+    }
+
+    /**
+     * For test purpose
+     */
+    OperatorBase(final ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
         this.byteBuddy = byteBuddy;
-        classLoadingStrategy = ClassReloadingStrategy.fromInstalledAgent();
+        this.classLoadingStrategy = classLoadingStrategy;
     }
 
     @Override
@@ -55,5 +62,5 @@ abstract class OperatorBase<T extends Identifier> implements Operator, AutoClose
 
     protected abstract Optional<T> getMutationTarget(MutationDetailsInterface mutationDetailsInterface);
 
-    protected abstract AsmVisitorWrapper visitor(T targetIdentifier);
+    protected abstract K visitor(T targetIdentifier);
 }

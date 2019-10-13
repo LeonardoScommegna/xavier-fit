@@ -1,7 +1,10 @@
+/*
 package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationDetails;
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
+import com.fteotini.amf.mutator.Visitors.ForField;
+import com.fteotini.amf.mutator.Visitors.RemoveAnnotation;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -68,40 +71,7 @@ class FieldOp extends FieldOperatorBase {
 
     @Override
     protected AsmVisitorWrapper visitor(FieldIdentifier targetIdentifier) {
-        return new AsmVisitorWrapper() {
-            @Override
-            public int mergeWriter(int flags) {
-                return flags;
-            }
-
-            @Override
-            public int mergeReader(int flags) {
-                return flags;
-            }
-
-            @Override
-            public ClassVisitor wrap(TypeDescription instrumentedType, ClassVisitor classVisitor, Implementation.Context implementationContext, TypePool typePool, FieldList<FieldDescription.InDefinedShape> fields, MethodList<?> methods, int writerFlags, int readerFlags) {
-                return new ClassVisitor(Opcodes.ASM7, classVisitor) {
-                    @Override
-                    public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-                        var visitor = super.visitField(access, name, descriptor, signature, value);
-
-                        if (visitor != null) {
-                            visitor = new FieldVisitor(Opcodes.ASM7, visitor) {
-                                @Override
-                                public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-                                    if (descriptor.equals(DummyAnnotation.class.descriptorString()))
-                                        return null;
-                                    return super.visitAnnotation(descriptor, visible);
-                                }
-                            };
-                        }
-
-                        return visitor;
-                    }
-                };
-            }
-        };
+        return new ForField(new RemoveAnnotation<>(DummyAnnotation.class));
     }
 }
 
@@ -113,4 +83,4 @@ class Dummy {
     @DummyAnnotation
     void run() {
     }
-}
+}*/
