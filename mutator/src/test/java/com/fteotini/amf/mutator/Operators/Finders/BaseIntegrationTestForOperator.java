@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 abstract class BaseIntegrationTestForOperator {
-    private static final String PKG_ID = "com.fteotini.amf.mutator.Operators.Finders.operatorTestEntities";
+    private static final String PKG_ID = "com.fteotini.amf.mutator.Operators.operatorTestEntities";
     static ScanResult scanResult;
 
     @BeforeAll

@@ -2,7 +2,7 @@ package com.fteotini.amf.mutator.Operators.Finders;
 
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
 import com.fteotini.amf.mutator.OperatorTarget;
-import com.fteotini.amf.mutator.Operators.Finders.operatorTestEntities.DummyAnnotation;
+import com.fteotini.amf.mutator.Operators.operatorTestEntities.DummyAnnotation;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 

@@ -6,25 +6,35 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
-abstract class OperatorBase<T extends Identifier> implements Operator {
+abstract class OperatorBase<T extends Identifier> implements Operator, AutoCloseable, Closeable {
     private final ByteBuddy byteBuddy;
+    private final ClassReloadingStrategy classLoadingStrategy;
+    private Class<?> classObject;
 
-    public OperatorBase(final ByteBuddy byteBuddy) {
+    OperatorBase(final ByteBuddy byteBuddy) {
         this.byteBuddy = byteBuddy;
+        classLoadingStrategy = ClassReloadingStrategy.fromInstalledAgent();
     }
 
     @Override
     public void runMutation(MutationDetails mutation) {
         getMutationTarget(mutation).ifPresent(identifier -> {
-            final Class<?> classObject = getClassObject(className(identifier));
+            classObject = getClassObject(className(identifier));
             byteBuddy.decorate(classObject)
                     .visit(visitor(identifier))
                     .make()
-                    .load(classObject.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+                    .load(classObject.getClassLoader(), classLoadingStrategy);
         });
+    }
+
+    @Override
+    public void close() throws IOException {
+        classLoadingStrategy.reset(classObject);
     }
 
     private static Class<?> getClassObject(String fullName) {

@@ -1,7 +1,7 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
 import com.fteotini.amf.mutator.OperatorTarget;
-import com.fteotini.amf.mutator.Operators.Finders.operatorTestEntities.DummyAnnotation;
+import com.fteotini.amf.mutator.Operators.operatorTestEntities.DummyAnnotation;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
