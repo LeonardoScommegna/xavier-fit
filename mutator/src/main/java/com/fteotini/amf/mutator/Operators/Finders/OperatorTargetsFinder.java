@@ -1,10 +1,10 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 import io.github.classgraph.ScanResult;
 
 import java.util.Set;
 
 public interface OperatorTargetsFinder {
-    Set<MutationDetails> findMutations(ScanResult scanResult);
+    Set<MutationDetailsInterface> findMutations(ScanResult scanResult);
 }

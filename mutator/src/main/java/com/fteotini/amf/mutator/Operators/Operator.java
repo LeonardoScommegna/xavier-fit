@@ -1,7 +1,7 @@
 package com.fteotini.amf.mutator.Operators;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 
 public interface Operator {
-    void runMutation(MutationDetails mutation);
+    void runMutation(MutationDetailsInterface mutation);
 }

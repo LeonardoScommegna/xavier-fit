@@ -1,6 +1,7 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
 import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.MethodInfo;
@@ -17,7 +18,7 @@ abstract class MethodOperatorTargetsFinderBase<A extends Annotation> extends Ope
     }
 
     @Override
-    protected final MutationDetails getMutationDetails(MethodInfo entityInfo) {
+    protected final MutationDetailsInterface getMutationDetails(MethodInfo entityInfo) {
         return MutationDetails.ForMethod(entityInfo.getName(), getMethodParameterTypes(entityInfo), entityInfo.getClassInfo().getName());
     }
 

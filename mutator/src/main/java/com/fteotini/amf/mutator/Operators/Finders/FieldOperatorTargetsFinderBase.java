@@ -1,6 +1,7 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
 import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.FieldInfo;
@@ -10,7 +11,7 @@ import java.util.stream.Stream;
 
 abstract class FieldOperatorTargetsFinderBase<A extends Annotation> extends OperatorTargetsFinderBase<A, FieldInfo> {
     @Override
-    protected final MutationDetails getMutationDetails(FieldInfo entityInfo) {
+    protected final MutationDetailsInterface getMutationDetails(FieldInfo entityInfo) {
         return MutationDetails.ForField(entityInfo.getName(), entityInfo.getClassInfo().getName());
     }
 

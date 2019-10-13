@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 abstract class OperatorTargetsFinderBase<A extends Annotation, I> implements OperatorTargetsFinder {
     @Override
-    public Set<MutationDetails> findMutations(ScanResult scanResult) {
+    public Set<MutationDetailsInterface> findMutations(ScanResult scanResult) {
         var classes = scanResult.getAllStandardClasses().filter(this::initialClassFilter);
 
         return toResultTypeStream(classes)
@@ -26,7 +26,7 @@ abstract class OperatorTargetsFinderBase<A extends Annotation, I> implements Ope
 
     protected abstract Class<A> targetAnnotation();
 
-    protected abstract MutationDetails getMutationDetails(I entityInfo);
+    protected abstract MutationDetailsInterface getMutationDetails(I entityInfo);
 
     protected abstract boolean initialClassFilter(ClassInfo classInfo);
 

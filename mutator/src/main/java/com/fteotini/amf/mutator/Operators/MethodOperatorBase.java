@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.MethodIdentifier;
 import net.bytebuddy.ByteBuddy;
 
@@ -18,7 +18,7 @@ abstract class MethodOperatorBase extends OperatorBase<MethodIdentifier> {
     }
 
     @Override
-    protected final Optional<MethodIdentifier> getMutationTarget(MutationDetails mutationDetails) {
-        return mutationDetails.getMethodIdentifier();
+    protected final Optional<MethodIdentifier> getMutationTarget(MutationDetailsInterface mutationDetailsInterface) {
+        return mutationDetailsInterface.getMethodIdentifier();
     }
 }

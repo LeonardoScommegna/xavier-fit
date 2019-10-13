@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.Identifier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -8,13 +8,13 @@ import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 
 abstract class OperatorBase<T extends Identifier> implements Operator, AutoCloseable, Closeable {
     private final ByteBuddy byteBuddy;
     private final ClassReloadingStrategy classLoadingStrategy;
-    private Class<?> classObject;
+
+    private Class<?> mutantClass;
 
     OperatorBase(final ByteBuddy byteBuddy) {
         this.byteBuddy = byteBuddy;
@@ -22,19 +22,19 @@ abstract class OperatorBase<T extends Identifier> implements Operator, AutoClose
     }
 
     @Override
-    public void runMutation(MutationDetails mutation) {
+    public void runMutation(MutationDetailsInterface mutation) {
         getMutationTarget(mutation).ifPresent(identifier -> {
-            classObject = getClassObject(className(identifier));
-            byteBuddy.decorate(classObject)
+            mutantClass = getClassObject(className(identifier));
+            byteBuddy.decorate(mutantClass)
                     .visit(visitor(identifier))
                     .make()
-                    .load(classObject.getClassLoader(), classLoadingStrategy);
+                    .load(mutantClass.getClassLoader(), classLoadingStrategy);
         });
     }
 
     @Override
     public void close() throws IOException {
-        classLoadingStrategy.reset(classObject);
+        classLoadingStrategy.reset(mutantClass);
     }
 
     private static Class<?> getClassObject(String fullName) {
@@ -45,15 +45,15 @@ abstract class OperatorBase<T extends Identifier> implements Operator, AutoClose
         }
     }
 
-    private static Class<?>[] getParametersClass(String[] classNames) {
+    /*private static Class<?>[] getParametersClass(String[] classNames) {
         return Arrays.stream(classNames)
                 .map(OperatorBase::getClassObject)
                 .toArray(Class<?>[]::new);
-    }
+    }*/
 
     protected abstract String className(T identifier);
 
-    protected abstract Optional<T> getMutationTarget(MutationDetails mutationDetails);
+    protected abstract Optional<T> getMutationTarget(MutationDetailsInterface mutationDetailsInterface);
 
     protected abstract AsmVisitorWrapper visitor(T targetIdentifier);
 }
