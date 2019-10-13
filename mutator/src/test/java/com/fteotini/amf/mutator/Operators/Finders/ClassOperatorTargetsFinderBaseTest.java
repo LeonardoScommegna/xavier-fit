@@ -1,15 +1,16 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.Finders;
 
 import com.fteotini.amf.mutator.OperatorTarget;
-import com.fteotini.amf.mutator.Operators.operatorTestEntities.DummyAnnotation;
+import com.fteotini.amf.mutator.Operators.Finders.operatorTestEntities.DummyAnnotation;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ClassOperatorBaseTest extends BaseIntegrationTestForOperator {
+class ClassOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator {
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
     void Given_an_operator_set_to_work_on_classes_then_it_should_build_a_set_of_mutation_details_containing_all_the_relevant_data() {
-        var sut = new ClassOperator();
+        var sut = new ClassOperatorTargetsFinder();
 
         var result = sut.findMutations(scanResult);
 
@@ -20,7 +21,7 @@ class ClassOperatorBaseTest extends BaseIntegrationTestForOperator {
     }
 }
 
-class ClassOperator extends ClassOperatorBase<DummyAnnotation> {
+class ClassOperatorTargetsFinder extends ClassOperatorTargetsFinderBase<DummyAnnotation> {
     @Override
     protected Class<DummyAnnotation> targetAnnotation() {
         return DummyAnnotation.class;

@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.Finders;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 abstract class BaseIntegrationTestForOperator {
-    private static final String PKG_ID = "com.fteotini.amf.mutator.Operators.operatorTestEntities";
+    private static final String PKG_ID = "com.fteotini.amf.mutator.Operators.Finders.operatorTestEntities";
     static ScanResult scanResult;
 
     @BeforeAll

@@ -1,19 +1,19 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.Finders;
 
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
 import com.fteotini.amf.mutator.OperatorTarget;
-import com.fteotini.amf.mutator.Operators.operatorTestEntities.DummyAnnotation;
+import com.fteotini.amf.mutator.Operators.Finders.operatorTestEntities.DummyAnnotation;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-class FieldOperatorBaseTest extends BaseIntegrationTestForOperator {
+class FieldOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator {
     @SuppressWarnings("unchecked")
     @Test
     void Given_an_operator_set_to_work_on_fields_then_it_should_build_a_set_of_mutation_details_containing_all_the_relevant_data() {
-        var sut = new FieldOperator();
+        var sut = new FieldOperatorTargetsFinder();
 
         var result = sut.findMutations(scanResult);
 
@@ -29,7 +29,7 @@ class FieldOperatorBaseTest extends BaseIntegrationTestForOperator {
     }
 }
 
-class FieldOperator extends FieldOperatorBase<DummyAnnotation> {
+class FieldOperatorTargetsFinder extends FieldOperatorTargetsFinderBase<DummyAnnotation> {
     @Override
     protected Class<DummyAnnotation> targetAnnotation() {
         return DummyAnnotation.class;
