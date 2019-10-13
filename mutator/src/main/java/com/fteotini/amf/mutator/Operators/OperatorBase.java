@@ -1,35 +1,49 @@
 package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationDetails;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
+import com.fteotini.amf.mutator.MutationIdentifiers.Identifier;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
+import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.Optional;
 
-abstract class OperatorBase<A extends Annotation, I> implements Operator {
+abstract class OperatorBase<T extends Identifier> implements Operator {
+    private final ByteBuddy byteBuddy;
+
+    public OperatorBase(final ByteBuddy byteBuddy) {
+        this.byteBuddy = byteBuddy;
+    }
+
     @Override
-    public Set<MutationDetails> findMutations(ScanResult scanResult) {
-        var classes = scanResult.getAllStandardClasses().filter(this::initialClassFilter);
-
-        return toResultTypeStream(classes)
-                .map(this::getMutationDetails)
-                .collect(Collectors.toUnmodifiableSet());
+    public void runMutation(MutationDetails mutation) {
+        getMutationTarget(mutation).ifPresent(identifier -> {
+            final Class<?> classObject = getClassObject(className(identifier));
+            byteBuddy.decorate(classObject)
+                    .visit(visitor(identifier))
+                    .make()
+                    .load(classObject.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+        });
     }
 
-    final String targetAnnotationName() {
-        return targetAnnotation().getCanonicalName();
+    private static Class<?> getClassObject(String fullName) {
+        try {
+            return Class.forName(fullName);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected abstract Class<A> targetAnnotation();
+    private static Class<?>[] getParametersClass(String[] classNames) {
+        return Arrays.stream(classNames)
+                .map(OperatorBase::getClassObject)
+                .toArray(Class<?>[]::new);
+    }
 
-    protected abstract MutationDetails getMutationDetails(I entityInfo);
+    protected abstract String className(T identifier);
 
-    protected abstract boolean initialClassFilter(ClassInfo classInfo);
+    protected abstract Optional<T> getMutationTarget(MutationDetails mutationDetails);
 
-    protected abstract Stream<I> toResultTypeStream(ClassInfoList classInfoList);
+    protected abstract AsmVisitorWrapper visitor(T targetIdentifier);
 }
-

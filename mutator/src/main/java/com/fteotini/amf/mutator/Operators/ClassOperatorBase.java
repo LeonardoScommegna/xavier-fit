@@ -1,25 +1,23 @@
 package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationDetails;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
+import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
+import net.bytebuddy.ByteBuddy;
 
-import java.lang.annotation.Annotation;
-import java.util.stream.Stream;
+import java.util.Optional;
 
-abstract class ClassOperatorBase<A extends Annotation> extends OperatorBase<A, ClassInfo> {
-    @Override
-    protected final MutationDetails getMutationDetails(ClassInfo entityInfo) {
-        return MutationDetails.ForClass(entityInfo.getName());
+abstract class ClassOperatorBase extends OperatorBase<ClassIdentifier> {
+    public ClassOperatorBase(ByteBuddy byteBuddy) {
+        super(byteBuddy);
     }
 
     @Override
-    protected final boolean initialClassFilter(ClassInfo classInfo) {
-        return classInfo.hasAnnotation(targetAnnotationName());
+    protected final String className(ClassIdentifier identifier) {
+        return identifier.getName();
     }
 
     @Override
-    protected final Stream<ClassInfo> toResultTypeStream(ClassInfoList classInfoList) {
-        return classInfoList.stream();
+    protected final Optional<ClassIdentifier> getMutationTarget(MutationDetails mutationDetails) {
+        return mutationDetails.getClassIdentifier();
     }
 }
