@@ -20,7 +20,7 @@ class FieldOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator 
         assertThat(result).hasSize(3)
                 .allSatisfy(x -> assertThat(x.getTargetElementType()).isEqualTo(OperatorTarget.Field))
                 .extracting(x -> x.getFieldIdentifier().get())
-                .extracting(FieldIdentifier::getFieldSimpleName, methodIdentifier -> methodIdentifier.getBelongingClass().getFullName())
+                .extracting(FieldIdentifier::getName, methodIdentifier -> methodIdentifier.getBelongingClass().getName())
                 .containsExactlyInAnyOrder(
                         new Tuple("field1", getClassFullName("DummyClass1")),
                         new Tuple("field1", getClassFullName("DummyClass3")),

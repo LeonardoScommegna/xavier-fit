@@ -16,7 +16,7 @@ class ClassOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator 
 
         assertThat(result).hasSize(2)
                 .allSatisfy(x -> assertThat(x.getTargetElementType()).isEqualTo(OperatorTarget.Class))
-                .extracting(x -> x.getClassIdentifier().get().getFullName())
+                .extracting(x -> x.getClassIdentifier().get().getName())
                 .containsExactlyInAnyOrder(getClassFullName("DummyClass1"), getClassFullName("DummyClass2"));
     }
 }

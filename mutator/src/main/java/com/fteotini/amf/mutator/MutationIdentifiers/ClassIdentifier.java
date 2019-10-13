@@ -1,13 +1,14 @@
 package com.fteotini.amf.mutator.MutationIdentifiers;
 
-public class ClassIdentifier {
+public class ClassIdentifier implements Identifier {
     private final String fullName;
 
     public ClassIdentifier(String fullName) {
         this.fullName = fullName;
     }
 
-    public String getFullName() {
+    @Override
+    public String getName() {
         return fullName;
     }
 }

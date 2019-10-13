@@ -20,7 +20,7 @@ class MethodOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator
         assertThat(result).hasSize(3)
                 .allSatisfy(x -> assertThat(x.getTargetElementType()).isEqualTo(OperatorTarget.Method))
                 .extracting(x -> x.getMethodIdentifier().get())
-                .extracting(MethodIdentifier::getMethodSimpleName, MethodIdentifier::getParametersType, methodIdentifier -> methodIdentifier.getBelongingClass().getFullName())
+                .extracting(MethodIdentifier::getName, MethodIdentifier::getParametersType, methodIdentifier -> methodIdentifier.getBelongingClass().getName())
                 .containsExactlyInAnyOrder(
                         new Tuple("annotated_method", new String[]{"java.lang.String"}, getClassFullName("DummyClass2")),
                         new Tuple("another_annotated_method", new String[0], getClassFullName("DummyClass2")),

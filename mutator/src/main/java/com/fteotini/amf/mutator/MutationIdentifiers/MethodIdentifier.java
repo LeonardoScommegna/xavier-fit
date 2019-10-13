@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.MutationIdentifiers;
 
-public class MethodIdentifier {
+public class MethodIdentifier implements Identifier {
     private final String methodSimpleName;
     private final String[] parametersType;
     private final ClassIdentifier belongingClass;
@@ -11,7 +11,8 @@ public class MethodIdentifier {
         this.belongingClass = belongingClass;
     }
 
-    public String getMethodSimpleName() {
+    @Override
+    public String getName() {
         return methodSimpleName;
     }
 

@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.MutationIdentifiers;
 
-public class FieldIdentifier {
+public class FieldIdentifier implements Identifier {
     private final String fieldSimpleName;
     private final ClassIdentifier belongingClass;
 
@@ -9,11 +9,12 @@ public class FieldIdentifier {
         this.belongingClass = belongingClass;
     }
 
-    public String getFieldSimpleName() {
-        return fieldSimpleName;
-    }
-
     public ClassIdentifier getBelongingClass() {
         return belongingClass;
+    }
+
+    @Override
+    public String getName() {
+        return fieldSimpleName;
     }
 }

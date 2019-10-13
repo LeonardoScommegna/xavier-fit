@@ -18,7 +18,7 @@ class MutationDetailsTest {
 
         assertThat(sut.getTargetElementType()).isEqualTo(OperatorTarget.Class);
         assertThat(sut.getClassIdentifier()).isNotEmpty().get()
-                .extracting(ClassIdentifier::getFullName).isEqualTo(classFullName);
+                .extracting(ClassIdentifier::getName).isEqualTo(classFullName);
 
         assertThat(sut.getFieldIdentifier()).isEmpty();
         assertThat(sut.getMethodIdentifier()).isEmpty();
@@ -36,9 +36,9 @@ class MutationDetailsTest {
         //noinspection unchecked
         assertThat(sut.getMethodIdentifier()).isNotEmpty().get()
                 .extracting(
-                        MethodIdentifier::getMethodSimpleName,
+                        MethodIdentifier::getName,
                         MethodIdentifier::getParametersType,
-                        x -> x.getBelongingClass().getFullName()
+                        x -> x.getBelongingClass().getName()
                 )
                 .containsExactly(methodSimpleName, methodParamTypes, classFullName);
 
@@ -57,7 +57,7 @@ class MutationDetailsTest {
         assertThat(sut.getTargetElementType()).isEqualTo(OperatorTarget.Field);
         //noinspection unchecked
         assertThat(sut.getFieldIdentifier()).isNotEmpty().get()
-                .extracting(FieldIdentifier::getFieldSimpleName, x -> x.getBelongingClass().getFullName())
+                .extracting(FieldIdentifier::getName, x -> x.getBelongingClass().getName())
                 .containsExactly(fieldName, classFullName);
 
 
