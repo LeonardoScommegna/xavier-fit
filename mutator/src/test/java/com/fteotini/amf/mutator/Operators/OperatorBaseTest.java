@@ -2,13 +2,13 @@ package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
+import com.fteotini.amf.mutator.Operators.OperatorBaseTest.DummyAsm;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.field.FieldList;
 import net.bytebuddy.description.method.MethodList;
 import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.ClassVisitor;
@@ -17,8 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -32,32 +30,10 @@ import static org.mockito.Mockito.*;
 @Tag("UnitTest")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
-class OperatorBaseTest {
+class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier, DummyAsm> {
     private DummyAsm dummyAsm = new DummyAsm();
-    @Mock
-    private MutationDetailsInterface mutationDetails;
-    @Mock(answer = Answers.RETURNS_SELF)
-    private DynamicType.Builder<OperatorBaseTest> buddyBuilder;
-    @Mock
-    private DynamicType.Unloaded<OperatorBaseTest> buddyUnloaded;
 
-    @Mock
-    private ByteBuddy buddy;
-    @Mock
-    private ClassReloadingStrategy reloadingStrategy;
-
-    private DummyOperatorBase sut;
     private String className = getClass().getCanonicalName();
-
-    @BeforeEach
-    void setUp() {
-        lenient().when(mutationDetails.getClassIdentifier()).thenAnswer(invocation -> Optional.of(new ClassIdentifier(className)));
-
-        lenient().when(buddy.decorate(getClass())).thenAnswer(invocation -> buddyBuilder);
-        lenient().when(buddyBuilder.make()).thenReturn(buddyUnloaded);
-
-        sut = new DummyOperatorBase(buddy, reloadingStrategy);
-    }
 
     @Test
     void Given_an_empty_optional_returned_from_getMutationTarget_then_it_should_not_do_anything() {
@@ -98,8 +74,20 @@ class OperatorBaseTest {
         inOrder.verify(buddyUnloaded).load(getClass().getClassLoader(), reloadingStrategy);
     }
 
+    @BeforeEach
+    @Override
+    void setUp() {
+        lenient().when(mutationDetails.getClassIdentifier()).thenAnswer(invocation -> Optional.of(new ClassIdentifier(className)));
+        super.setUp();
+    }
+
+    @Override
+    protected OperatorBase<ClassIdentifier, DummyAsm> buildSut() {
+        return new DummyOperatorBase(buddy, reloadingStrategy);
+    }
+
     //<editor-fold desc="Dummy Classes">
-    private static class DummyAsm implements AsmVisitorWrapper {
+    static class DummyAsm implements AsmVisitorWrapper {
         @Override
         public int mergeWriter(int flags) {
             return 0;
@@ -115,7 +103,6 @@ class OperatorBaseTest {
             return null;
         }
     }
-
     private class DummyOperatorBase extends OperatorBase<ClassIdentifier, DummyAsm> {
         DummyOperatorBase(ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
             super(byteBuddy, classLoadingStrategy);
@@ -132,7 +119,7 @@ class OperatorBaseTest {
         }
 
         @Override
-        protected DummyAsm visitor(ClassIdentifier targetIdentifier) {
+        protected OperatorBaseTest.DummyAsm visitor(ClassIdentifier targetIdentifier) {
             return dummyAsm;
         }
     }
