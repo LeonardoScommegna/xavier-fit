@@ -9,11 +9,3 @@ public interface AnnotationVisitorWrapper {
     AnnotationVisitor wrap(Supplier<AnnotationVisitor> annotationVisitor, String descriptor, boolean visible);
 }
 
-class NoOp implements AnnotationVisitorWrapper {
-
-    @Override
-    public AnnotationVisitor wrap(Supplier<AnnotationVisitor> annotationVisitor, String descriptor, boolean visible) {
-        return annotationVisitor.get();
-    }
-}
-

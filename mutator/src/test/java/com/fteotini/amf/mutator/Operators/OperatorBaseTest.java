@@ -2,31 +2,22 @@ package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
-import com.fteotini.amf.mutator.Operators.OperatorBaseTest.DummyAsm;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
-import net.bytebuddy.description.field.FieldDescription;
-import net.bytebuddy.description.field.FieldList;
-import net.bytebuddy.description.method.MethodList;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.jar.asm.ClassVisitor;
-import net.bytebuddy.pool.TypePool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 @Tag("UnitTest")
-class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier, DummyAsm> {
-    private DummyAsm dummyAsm = new DummyAsm();
-
+class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier> {
     private String className = getClass().getCanonicalName();
 
     @Test
@@ -63,7 +54,7 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier, DummyAsm> {
         sut.runMutation(mutationDetails);
 
         var inOrder = inOrder(buddyBuilder, buddyUnloaded);
-        inOrder.verify(buddyBuilder).visit(dummyAsm);
+        inOrder.verify(buddyBuilder).visit(visitor);
         inOrder.verify(buddyBuilder).make();
         inOrder.verify(buddyUnloaded).load(getClass().getClassLoader(), reloadingStrategy);
     }
@@ -76,30 +67,22 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier, DummyAsm> {
     }
 
     @Override
-    protected OperatorBase<ClassIdentifier, DummyAsm> buildSut() {
-        return new DummyOperatorBase(buddy, reloadingStrategy);
+    protected OperatorBase<ClassIdentifier> buildSut() {
+        return new DummyOperatorBase(buddy, classIdentifier -> visitor, reloadingStrategy);
     }
 
     //<editor-fold desc="Dummy Classes">
-    static class DummyAsm implements AsmVisitorWrapper {
-        @Override
-        public int mergeWriter(int flags) {
-            return 0;
-        }
+    private static class DummyOperatorBase extends OperatorBase<ClassIdentifier> {
 
-        @Override
-        public int mergeReader(int flags) {
-            return 0;
-        }
-
-        @Override
-        public ClassVisitor wrap(TypeDescription instrumentedType, ClassVisitor classVisitor, Implementation.Context implementationContext, TypePool typePool, FieldList<FieldDescription.InDefinedShape> fields, MethodList<?> methods, int writerFlags, int readerFlags) {
-            return null;
-        }
-    }
-    private class DummyOperatorBase extends OperatorBase<ClassIdentifier, DummyAsm> {
-        DummyOperatorBase(ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
-            super(byteBuddy, classLoadingStrategy);
+        /**
+         * For test purpose
+         *
+         * @param byteBuddy
+         * @param visitorFactory
+         * @param classLoadingStrategy
+         */
+        DummyOperatorBase(ByteBuddy byteBuddy, Function<ClassIdentifier, AsmVisitorWrapper> visitorFactory, ClassReloadingStrategy classLoadingStrategy) {
+            super(byteBuddy, visitorFactory, classLoadingStrategy);
         }
 
         @Override
@@ -112,10 +95,6 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier, DummyAsm> {
             return mutationDetailsInterface.getClassIdentifier();
         }
 
-        @Override
-        protected OperatorBaseTest.DummyAsm visitor(ClassIdentifier targetIdentifier) {
-            return dummyAsm;
-        }
     }
     //</editor-fold>
 }

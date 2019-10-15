@@ -2,25 +2,28 @@ package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.MethodIdentifier;
-import com.fteotini.amf.mutator.Visitors.ForMethod;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
 import java.util.Optional;
+import java.util.function.Function;
 
-abstract class MethodOperatorBase extends OperatorBase<MethodIdentifier, ForMethod> {
-    public MethodOperatorBase(ByteBuddy byteBuddy) {
-        super(byteBuddy);
+class MethodOperator extends OperatorBase<MethodIdentifier> {
+
+    MethodOperator(ByteBuddy byteBuddy, Function<MethodIdentifier, AsmVisitorWrapper> visitorFactory) {
+        super(byteBuddy, visitorFactory);
     }
 
     /**
      * For test purpose
      *
      * @param byteBuddy
+     * @param visitorFactory
      * @param classLoadingStrategy
      */
-    MethodOperatorBase(ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
-        super(byteBuddy, classLoadingStrategy);
+    MethodOperator(ByteBuddy byteBuddy, Function<MethodIdentifier, AsmVisitorWrapper> visitorFactory, ClassReloadingStrategy classLoadingStrategy) {
+        super(byteBuddy, visitorFactory, classLoadingStrategy);
     }
 
     @Override

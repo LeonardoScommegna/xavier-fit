@@ -19,7 +19,7 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
-abstract class AbstractOperatorTest<T extends Identifier, K extends AsmVisitorWrapper> {
+abstract class AbstractOperatorTest<T extends Identifier> {
     @Mock
     protected MutationDetailsInterface mutationDetails;
     @Mock(answer = Answers.RETURNS_SELF)
@@ -30,8 +30,10 @@ abstract class AbstractOperatorTest<T extends Identifier, K extends AsmVisitorWr
     protected ByteBuddy buddy;
     @Mock
     protected ClassReloadingStrategy reloadingStrategy;
+    @Mock
+    protected AsmVisitorWrapper visitor;
 
-    protected OperatorBase<T, K> sut;
+    protected OperatorBase<T> sut;
 
     @BeforeEach
     void setUp() {
@@ -41,5 +43,5 @@ abstract class AbstractOperatorTest<T extends Identifier, K extends AsmVisitorWr
         sut = buildSut();
     }
 
-    protected abstract OperatorBase<T, K> buildSut();
+    protected abstract OperatorBase<T> buildSut();
 }
