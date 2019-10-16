@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Visitors;
 
-import net.bytebuddy.asm.AsmVisitorWrapper;
+import com.fteotini.amf.mutator.Visitors.ForAnnotations.AnnotationVisitorWrapper;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.field.FieldList;
 import net.bytebuddy.description.method.MethodList;
@@ -9,24 +9,19 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.AnnotationVisitor;
 import net.bytebuddy.jar.asm.ClassVisitor;
 import net.bytebuddy.jar.asm.FieldVisitor;
+import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.pool.TypePool;
 
-public class ForField implements AsmVisitorWrapper {
+import static net.bytebuddy.matcher.ElementMatchers.hasDescriptor;
+import static net.bytebuddy.matcher.ElementMatchers.named;
 
-    private final AnnotationVisitorWrapper annotationVisitorWrapper;
+public class ForField extends BaseVisitorWrapper {
 
-    public ForField(AnnotationVisitorWrapper annotationVisitorWrapper) {
-        this.annotationVisitorWrapper = annotationVisitorWrapper;
-    }
+    private final ElementMatcher<? super FieldDescription.InDefinedShape> matcher;
 
-    @Override
-    public int mergeWriter(int flags) {
-        return flags;
-    }
-
-    @Override
-    public int mergeReader(int flags) {
-        return flags;
+    public ForField(AnnotationVisitorWrapper annotationVisitorWrapper, ElementMatcher<? super FieldDescription.InDefinedShape> matcher) {
+        super(annotationVisitorWrapper);
+        this.matcher = matcher;
     }
 
     @Override
@@ -40,19 +35,25 @@ public class ForField implements AsmVisitorWrapper {
             int writerFlags,
             int readerFlags
     ) {
-        return new DispatcherVisitor(classVisitor);
+        return new DispatcherVisitor(classVisitor, fields);
     }
 
     private class DispatcherVisitor extends ClassVisitor {
-        DispatcherVisitor(ClassVisitor classVisitor) {
-            super(AsmConfig.ASM_VERSION, classVisitor);
+        private final FieldList<FieldDescription.InDefinedShape> fields;
+
+        DispatcherVisitor(ClassVisitor classVisitor, FieldList<FieldDescription.InDefinedShape> fields) {
+            super(ASM_VERSION, classVisitor);
+            this.fields = fields;
         }
 
+        @SuppressWarnings("DuplicatedCode")
         @Override
         public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
             var visitor = super.visitField(access, name, descriptor, signature, value);
-            if (visitor != null) {
-                visitor = new FieldVisitor(AsmConfig.ASM_VERSION, visitor) {
+
+            var fieldDescription = fields.filter(named(name).and(hasDescriptor(descriptor))).getOnly();
+            if (visitor != null && matcher.matches(fieldDescription)) {
+                visitor = new FieldVisitor(ASM_VERSION, visitor) {
                     @Override
                     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
                         return annotationVisitorWrapper.wrap(() -> super.visitAnnotation(descriptor, visible), descriptor, visible);

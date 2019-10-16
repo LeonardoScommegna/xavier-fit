@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Visitors;
+package com.fteotini.amf.mutator.Visitors.ForAnnotations;
 
 import net.bytebuddy.jar.asm.AnnotationVisitor;
 import net.bytebuddy.jar.asm.Type;
