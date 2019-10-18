@@ -3,27 +3,17 @@ package com.fteotini.amf.mutator.Operators;
 import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
 import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
 import java.util.Optional;
-import java.util.function.Function;
 
-class FieldOperator extends OperatorBase<FieldIdentifier> {
-
-    FieldOperator(ByteBuddy byteBuddy, Function<FieldIdentifier, AsmVisitorWrapper> visitorFactory) {
-        super(byteBuddy, visitorFactory);
+abstract class FieldOperator extends OperatorBase<FieldIdentifier> {
+    FieldOperator(ByteBuddy byteBuddy) {
+        super(byteBuddy);
     }
 
-    /**
-     * For test purpose
-     *
-     * @param byteBuddy
-     * @param visitorFactory
-     * @param classLoadingStrategy
-     */
-    FieldOperator(ByteBuddy byteBuddy, Function<FieldIdentifier, AsmVisitorWrapper> visitorFactory, ClassReloadingStrategy classLoadingStrategy) {
-        super(byteBuddy, visitorFactory, classLoadingStrategy);
+    FieldOperator(ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
+        super(byteBuddy, classLoadingStrategy);
     }
 
     @Override

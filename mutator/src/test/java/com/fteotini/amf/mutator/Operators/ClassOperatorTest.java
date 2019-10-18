@@ -1,6 +1,9 @@
 package com.fteotini.amf.mutator.Operators;
 
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
+import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +28,23 @@ class ClassOperatorTest extends AbstractOperatorTest<ClassIdentifier> {
 
     @Override
     protected OperatorBase<ClassIdentifier> buildSut() {
-        return new ClassOperator(buddy, classIdentifier -> visitor, reloadingStrategy);
+        return new DummyClassOperator(buddy, reloadingStrategy);
+    }
+
+    private class DummyClassOperator extends ClassOperator {
+        /**
+         * For test purpose
+         *
+         * @param byteBuddy
+         * @param classLoadingStrategy
+         */
+        DummyClassOperator(ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
+            super(byteBuddy, classLoadingStrategy);
+        }
+
+        @Override
+        protected AsmVisitorWrapper visitor(ClassIdentifier identifier) {
+            return visitor;
+        }
     }
 }

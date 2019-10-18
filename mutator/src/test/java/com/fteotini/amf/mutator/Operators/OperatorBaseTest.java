@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
@@ -68,21 +67,19 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier> {
 
     @Override
     protected OperatorBase<ClassIdentifier> buildSut() {
-        return new DummyOperatorBase(buddy, classIdentifier -> visitor, reloadingStrategy);
+        return new DummyOperatorBase(buddy, reloadingStrategy);
     }
 
     //<editor-fold desc="Dummy Classes">
-    private static class DummyOperatorBase extends OperatorBase<ClassIdentifier> {
+    private class DummyOperatorBase extends OperatorBase<ClassIdentifier> {
 
-        /**
-         * For test purpose
-         *
-         * @param byteBuddy
-         * @param visitorFactory
-         * @param classLoadingStrategy
-         */
-        DummyOperatorBase(ByteBuddy byteBuddy, Function<ClassIdentifier, AsmVisitorWrapper> visitorFactory, ClassReloadingStrategy classLoadingStrategy) {
-            super(byteBuddy, visitorFactory, classLoadingStrategy);
+        DummyOperatorBase(ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
+            super(byteBuddy, classLoadingStrategy);
+        }
+
+        @Override
+        protected AsmVisitorWrapper visitor(ClassIdentifier identifier) {
+            return visitor;
         }
 
         @Override

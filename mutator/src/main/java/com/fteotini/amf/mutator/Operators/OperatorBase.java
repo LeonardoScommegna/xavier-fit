@@ -9,25 +9,22 @@ import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Function;
 
 abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Closeable {
     private final ByteBuddy byteBuddy;
-    private final Function<T, AsmVisitorWrapper> visitorFactory;
     private final ClassReloadingStrategy classLoadingStrategy;
 
     private Class<?> mutantClass;
 
-    OperatorBase(final ByteBuddy byteBuddy, Function<T, AsmVisitorWrapper> visitorFactory) {
-        this(byteBuddy, visitorFactory, ClassReloadingStrategy.fromInstalledAgent());
+    OperatorBase(final ByteBuddy byteBuddy) {
+        this(byteBuddy, ClassReloadingStrategy.fromInstalledAgent());
     }
 
     /**
      * For test purpose
      */
-    OperatorBase(final ByteBuddy byteBuddy, Function<T, AsmVisitorWrapper> visitorFactory, ClassReloadingStrategy classLoadingStrategy) {
+    OperatorBase(final ByteBuddy byteBuddy, ClassReloadingStrategy classLoadingStrategy) {
         this.byteBuddy = byteBuddy;
-        this.visitorFactory = visitorFactory;
         this.classLoadingStrategy = classLoadingStrategy;
     }
 
@@ -36,7 +33,7 @@ abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Clos
         getMutationTarget(mutation).ifPresent(identifier -> {
             mutantClass = getClassObject(className(identifier));
             byteBuddy.decorate(mutantClass)
-                    .visit(visitorFactory.apply(identifier))
+                    .visit(visitor(identifier))
                     .make()
                     .load(mutantClass.getClassLoader(), classLoadingStrategy);
         });
@@ -55,11 +52,14 @@ abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Clos
         }
     }
 
+
     /*private static Class<?>[] getParametersClass(String[] classNames) {
         return Arrays.stream(classNames)
                 .map(OperatorBase::getClassObject)
                 .toArray(Class<?>[]::new);
     }*/
+
+    protected abstract AsmVisitorWrapper visitor(T identifier);
 
     protected abstract String className(T identifier);
 
