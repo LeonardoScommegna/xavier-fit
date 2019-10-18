@@ -2,14 +2,12 @@ package com.fteotini.amf.mutator.Visitors;
 
 import com.fteotini.amf.mutator.Visitors.ForAnnotations.AnnotationVisitorWrapper;
 import net.bytebuddy.asm.AsmVisitorWrapper;
-import net.bytebuddy.jar.asm.Opcodes;
 
-abstract class BaseVisitorWrapper implements AsmVisitorWrapper {
-    static final int ASM_VERSION = Opcodes.ASM7;
+abstract class BaseClassVisitorWrapper implements AsmVisitorWrapper {
 
     final AnnotationVisitorWrapper annotationVisitorWrapper;
 
-    BaseVisitorWrapper(AnnotationVisitorWrapper annotationVisitorWrapper) {
+    BaseClassVisitorWrapper(AnnotationVisitorWrapper annotationVisitorWrapper) {
         this.annotationVisitorWrapper = annotationVisitorWrapper;
     }
 

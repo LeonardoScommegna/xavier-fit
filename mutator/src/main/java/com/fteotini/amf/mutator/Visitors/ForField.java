@@ -15,7 +15,7 @@ import net.bytebuddy.pool.TypePool;
 import static net.bytebuddy.matcher.ElementMatchers.hasDescriptor;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-public class ForField extends BaseVisitorWrapper {
+public class ForField extends BaseClassVisitorWrapper {
 
     private final ElementMatcher<? super FieldDescription.InDefinedShape> matcher;
 
@@ -42,7 +42,7 @@ public class ForField extends BaseVisitorWrapper {
         private final FieldList<FieldDescription.InDefinedShape> fields;
 
         DispatcherVisitor(ClassVisitor classVisitor, FieldList<FieldDescription.InDefinedShape> fields) {
-            super(ASM_VERSION, classVisitor);
+            super(AsmConfig.ASM_VERSION, classVisitor);
             this.fields = fields;
         }
 
@@ -53,7 +53,7 @@ public class ForField extends BaseVisitorWrapper {
 
             var fieldDescription = fields.filter(named(name).and(hasDescriptor(descriptor))).getOnly();
             if (visitor != null && matcher.matches(fieldDescription)) {
-                visitor = new FieldVisitor(ASM_VERSION, visitor) {
+                visitor = new FieldVisitor(AsmConfig.ASM_VERSION, visitor) {
                     @Override
                     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
                         return annotationVisitorWrapper.wrap(() -> super.visitAnnotation(descriptor, visible), descriptor, visible);

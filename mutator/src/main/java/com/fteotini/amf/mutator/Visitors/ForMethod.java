@@ -16,7 +16,7 @@ import net.bytebuddy.pool.TypePool;
 import static net.bytebuddy.matcher.ElementMatchers.hasDescriptor;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-public class ForMethod extends BaseVisitorWrapper {
+public class ForMethod extends BaseClassVisitorWrapper {
 
     private final ElementMatcher<? super MethodDescription> matcher;
 
@@ -35,7 +35,7 @@ public class ForMethod extends BaseVisitorWrapper {
         private final MethodList<?> methods;
 
         DispatchingVisitor(ClassVisitor classVisitor, MethodList<?> methods) {
-            super(ASM_VERSION, classVisitor);
+            super(AsmConfig.ASM_VERSION, classVisitor);
             this.methods = methods;
         }
 
@@ -46,7 +46,7 @@ public class ForMethod extends BaseVisitorWrapper {
 
             var currentMethod = methods.filter(named(name).and(hasDescriptor(descriptor))).getOnly();
             if (visitor != null && matcher.matches(currentMethod)) {
-                visitor = new MethodVisitor(ASM_VERSION, visitor) {
+                visitor = new MethodVisitor(AsmConfig.ASM_VERSION, visitor) {
                     @Override
                     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
                         return annotationVisitorWrapper.wrap(() -> super.visitAnnotation(descriptor, visible), descriptor, visible);

@@ -10,7 +10,7 @@ import net.bytebuddy.jar.asm.AnnotationVisitor;
 import net.bytebuddy.jar.asm.ClassVisitor;
 import net.bytebuddy.pool.TypePool;
 
-public class ForClass extends BaseVisitorWrapper {
+public class ForClass extends BaseClassVisitorWrapper {
 
     ForClass(AnnotationVisitorWrapper annotationVisitorWrapper) {
         super(annotationVisitorWrapper);
@@ -23,7 +23,7 @@ public class ForClass extends BaseVisitorWrapper {
 
     private class DispatchingVisitor extends ClassVisitor {
         DispatchingVisitor(ClassVisitor parentVisitor) {
-            super(ASM_VERSION, parentVisitor);
+            super(AsmConfig.ASM_VERSION, parentVisitor);
         }
 
         @Override
