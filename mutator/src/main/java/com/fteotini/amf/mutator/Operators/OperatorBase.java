@@ -44,20 +44,13 @@ abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Clos
         classLoadingStrategy.reset(mutantClass);
     }
 
-    private static Class<?> getClassObject(String fullName) {
+    protected static Class<?> getClassObject(String fullName) {
         try {
             return Class.forName(fullName);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-
-
-    /*private static Class<?>[] getParametersClass(String[] classNames) {
-        return Arrays.stream(classNames)
-                .map(OperatorBase::getClassObject)
-                .toArray(Class<?>[]::new);
-    }*/
 
     protected abstract AsmVisitorWrapper visitor(T identifier);
 
