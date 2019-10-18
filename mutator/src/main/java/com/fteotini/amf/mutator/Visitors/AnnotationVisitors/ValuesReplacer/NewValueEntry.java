@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Visitors.ForAnnotations.ValuesReplacer;
+package com.fteotini.amf.mutator.Visitors.AnnotationVisitors.ValuesReplacer;
 
 import com.google.common.base.Preconditions;
 

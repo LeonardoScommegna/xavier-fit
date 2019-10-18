@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Visitors;
 
-import com.fteotini.amf.mutator.Visitors.ForAnnotations.AnnotationVisitorWrapper;
+import com.fteotini.amf.mutator.Visitors.AnnotationVisitors.AnnotationVisitorWrapper;
 import net.bytebuddy.asm.AsmVisitorWrapper;
 
 abstract class BaseClassVisitorWrapper implements AsmVisitorWrapper {

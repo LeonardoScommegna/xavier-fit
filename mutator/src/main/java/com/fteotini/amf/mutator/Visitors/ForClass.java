@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Visitors;
 
-import com.fteotini.amf.mutator.Visitors.ForAnnotations.AnnotationVisitorWrapper;
+import com.fteotini.amf.mutator.Visitors.AnnotationVisitors.AnnotationVisitorWrapper;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.field.FieldList;
 import net.bytebuddy.description.method.MethodList;

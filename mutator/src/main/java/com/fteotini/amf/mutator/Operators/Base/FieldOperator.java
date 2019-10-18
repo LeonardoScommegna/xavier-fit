@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.Base;
 
 import com.fteotini.amf.mutator.MutationDetailsInterface;
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
@@ -11,8 +11,8 @@ import java.util.Optional;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
-abstract class FieldOperator extends MemberOperator<FieldIdentifier, FieldDescription.InDefinedShape> {
-    FieldOperator(ByteBuddy byteBuddy) {
+public abstract class FieldOperator extends MemberOperator<FieldIdentifier, FieldDescription.InDefinedShape> {
+    protected FieldOperator(ByteBuddy byteBuddy) {
         super(byteBuddy);
     }
 

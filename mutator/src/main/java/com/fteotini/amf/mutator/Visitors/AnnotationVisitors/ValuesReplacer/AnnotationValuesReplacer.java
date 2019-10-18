@@ -1,7 +1,7 @@
-package com.fteotini.amf.mutator.Visitors.ForAnnotations.ValuesReplacer;
+package com.fteotini.amf.mutator.Visitors.AnnotationVisitors.ValuesReplacer;
 
+import com.fteotini.amf.mutator.Visitors.AnnotationVisitors.AnnotationVisitorWrapper;
 import com.fteotini.amf.mutator.Visitors.AsmConfig;
-import com.fteotini.amf.mutator.Visitors.ForAnnotations.AnnotationVisitorWrapper;
 import net.bytebuddy.jar.asm.AnnotationVisitor;
 import net.bytebuddy.jar.asm.Type;
 
