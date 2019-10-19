@@ -12,7 +12,7 @@ import net.bytebuddy.pool.TypePool;
 
 public class ForClass extends BaseClassVisitorWrapper {
 
-    ForClass(AnnotationVisitorWrapper annotationVisitorWrapper) {
+    public ForClass(AnnotationVisitorWrapper annotationVisitorWrapper) {
         super(annotationVisitorWrapper);
     }
 

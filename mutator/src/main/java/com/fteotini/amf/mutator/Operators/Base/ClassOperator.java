@@ -3,12 +3,13 @@ package com.fteotini.amf.mutator.Operators.Base;
 import com.fteotini.amf.mutator.IMutationTarget;
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
 import java.util.Optional;
 
-abstract class ClassOperator extends OperatorBase<ClassIdentifier> {
-    ClassOperator(ByteBuddy byteBuddy) {
+public abstract class ClassOperator extends OperatorBase<ClassIdentifier> {
+    public ClassOperator(ByteBuddy byteBuddy) {
         super(byteBuddy);
     }
 
@@ -31,4 +32,5 @@ abstract class ClassOperator extends OperatorBase<ClassIdentifier> {
     protected final Optional<ClassIdentifier> getMutationTarget(IMutationTarget mutationDetailsInterface) {
         return mutationDetailsInterface.getClassIdentifier();
     }
+
 }

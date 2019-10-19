@@ -20,7 +20,7 @@ public class ForMethod extends BaseClassVisitorWrapper {
 
     private final ElementMatcher<? super MethodDescription> matcher;
 
-    ForMethod(AnnotationVisitorWrapper annotationVisitorWrapper, ElementMatcher<? super MethodDescription> matcher) {
+    public ForMethod(AnnotationVisitorWrapper annotationVisitorWrapper, ElementMatcher<? super MethodDescription> matcher) {
         super(annotationVisitorWrapper);
         this.matcher = matcher;
     }

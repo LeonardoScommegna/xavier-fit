@@ -4,6 +4,7 @@ import com.fteotini.amf.mutator.IMutationTarget;
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
+import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -78,8 +79,8 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier> {
         }
 
         @Override
-        protected AsmVisitorWrapper visitor(ClassIdentifier identifier) {
-            return visitor;
+        protected DynamicType.Builder<?> decorateBuilder(DynamicType.Builder<?> builder, ClassIdentifier identifier) {
+            return builder.visit(visitor);
         }
 
         @Override

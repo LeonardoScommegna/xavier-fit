@@ -7,7 +7,7 @@ import io.github.classgraph.ClassInfoList;
 
 import java.util.stream.Stream;
 
-class ClassOperatorTargetsFinder extends OperatorTargetsFinderBase<ClassInfo> {
+public class ClassOperatorTargetsFinder extends OperatorTargetsFinderBase<ClassInfo> {
     @Override
     protected final IMutationTarget getMutationDetails(ClassInfo entityInfo) {
         return MutationTarget.ForClass(entityInfo.getName());
