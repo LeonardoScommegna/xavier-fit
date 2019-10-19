@@ -12,6 +12,7 @@
         <module>launcher</module>
         <module>commons</module>
         <module>mutator</module>
+        <module>provided-mutators</module>
     </modules>
 
     <name>annotation.mutation.framework</name>
