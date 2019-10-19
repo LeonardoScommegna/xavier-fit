@@ -6,7 +6,7 @@ import com.fteotini.amf.mutator.MutationIdentifiers.MethodIdentifier;
 
 import java.util.Optional;
 
-public interface MutationDetailsInterface {
+public interface IMutationTarget {
     OperatorTarget getTargetElementType();
 
     Optional<ClassIdentifier> getClassIdentifier();

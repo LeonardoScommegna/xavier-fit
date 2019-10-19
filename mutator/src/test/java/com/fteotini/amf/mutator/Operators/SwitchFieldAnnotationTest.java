@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationTarget;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +25,7 @@ class SwitchFieldAnnotationTest {
     @Test
     void it_can_switch_field_annotations() throws IOException, NoSuchFieldException {
         try (var sut = new SwitchFieldAnnotation<>(new ByteBuddy(), From.class, To.class)) {
-            sut.runMutation(MutationDetails.ForField("foo", "com.fteotini.amf.mutator.Operators.SwitchFieldAnnotationTest$Dummy"));
+            sut.runMutation(MutationTarget.ForField("foo", "com.fteotini.amf.mutator.Operators.SwitchFieldAnnotationTest$Dummy"));
 
             var field = Dummy.class.getDeclaredField("foo");
 

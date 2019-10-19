@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators;
 
-import com.fteotini.amf.mutator.MutationDetails;
+import com.fteotini.amf.mutator.MutationTarget;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +26,7 @@ class RemoveAnnotationFromFieldTest {
     void it_can_remove_an_annotation_from_a_single_field() throws NoSuchMethodException, NoSuchFieldException, IOException {
         try (var sut = new RemoveAnnotationFromField<>(new ByteBuddy(), DummyAnnotation.class)) {
             var fieldName = "foo";
-            sut.runMutation(MutationDetails.ForField(fieldName, "com.fteotini.amf.mutator.Operators.RemoveAnnotationFromFieldTest$Dummy"));
+            sut.runMutation(MutationTarget.ForField(fieldName, "com.fteotini.amf.mutator.Operators.RemoveAnnotationFromFieldTest$Dummy"));
 
             var obj = Dummy.class;
 

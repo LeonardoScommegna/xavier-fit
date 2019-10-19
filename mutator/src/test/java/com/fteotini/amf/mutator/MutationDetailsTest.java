@@ -14,7 +14,7 @@ class MutationDetailsTest {
     @Test
     void When_constructed_for_class_then_it_should_fill_only_the_relevant_properties() {
         final var classFullName = "com.ft.Dummy";
-        var sut = MutationDetails.ForClass(classFullName);
+        var sut = MutationTarget.ForClass(classFullName);
 
         assertThat(sut.getTargetElementType()).isEqualTo(OperatorTarget.Class);
         assertThat(sut.getClassIdentifier()).isNotEmpty().get()
@@ -30,7 +30,7 @@ class MutationDetailsTest {
         final var methodParamTypes = new String[]{"java.lang.String"};
         final var classFullName = "com.ft.Dummy";
 
-        var sut = MutationDetails.ForMethod(methodSimpleName, methodParamTypes, classFullName);
+        var sut = MutationTarget.ForMethod(methodSimpleName, methodParamTypes, classFullName);
 
         assertThat(sut.getTargetElementType()).isEqualTo(OperatorTarget.Method);
         //noinspection unchecked
@@ -52,7 +52,7 @@ class MutationDetailsTest {
         final var fieldName = "field";
         final var classFullName = "com.ft.Dummy";
 
-        var sut = MutationDetails.ForField(fieldName, classFullName);
+        var sut = MutationTarget.ForField(fieldName, classFullName);
 
         assertThat(sut.getTargetElementType()).isEqualTo(OperatorTarget.Field);
         //noinspection unchecked

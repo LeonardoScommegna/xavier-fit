@@ -1,16 +1,15 @@
 package com.fteotini.amf.mutator.Operators.Base;
 
-import com.fteotini.amf.mutator.MutationDetailsInterface;
+import com.fteotini.amf.mutator.IMutationTarget;
 import com.fteotini.amf.mutator.MutationIdentifiers.Identifier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
 
-abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Closeable {
+abstract class OperatorBase<T extends Identifier> implements Operator {
     private final ByteBuddy byteBuddy;
     private final ClassReloadingStrategy classLoadingStrategy;
 
@@ -29,7 +28,8 @@ abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Clos
     }
 
 
-    public final void runMutation(MutationDetailsInterface mutation) {
+    @Override
+    public final void runMutation(IMutationTarget mutation) {
         getMutationTarget(mutation).ifPresent(identifier -> {
             mutantClass = getClassObject(className(identifier));
             byteBuddy.decorate(mutantClass)
@@ -56,6 +56,6 @@ abstract class OperatorBase<T extends Identifier> implements AutoCloseable, Clos
 
     protected abstract String className(T identifier);
 
-    protected abstract Optional<T> getMutationTarget(MutationDetailsInterface mutationDetailsInterface);
+    protected abstract Optional<T> getMutationTarget(IMutationTarget mutationDetailsInterface);
 
 }

@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-class FieldOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator {
+class FieldOperatorTargetsFinderTest extends BaseIntegrationTestForOperator {
     @SuppressWarnings("unchecked")
     @Test
     void Given_an_operator_set_to_work_on_fields_then_it_should_build_a_set_of_mutation_details_containing_all_the_relevant_data() {
         var sut = new FieldOperatorTargetsFinder();
 
-        var result = sut.findMutations(scanResult);
+        var result = sut.findMutations(scanResult, DummyAnnotation.class);
 
         assertThat(result).hasSize(3)
                 .allSatisfy(x -> assertThat(x.getTargetElementType()).isEqualTo(OperatorTarget.Field))
@@ -26,12 +26,5 @@ class FieldOperatorTargetsFinderBaseTest extends BaseIntegrationTestForOperator 
                         new Tuple("field1", getClassFullName("DummyClass3")),
                         new Tuple("field2", getClassFullName("DummyClass3"))
                 );
-    }
-}
-
-class FieldOperatorTargetsFinder extends FieldOperatorTargetsFinderBase<DummyAnnotation> {
-    @Override
-    protected Class<DummyAnnotation> targetAnnotation() {
-        return DummyAnnotation.class;
     }
 }

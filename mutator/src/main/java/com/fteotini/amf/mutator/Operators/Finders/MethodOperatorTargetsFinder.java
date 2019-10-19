@@ -1,16 +1,15 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
-import com.fteotini.amf.mutator.MutationDetails;
-import com.fteotini.amf.mutator.MutationDetailsInterface;
+import com.fteotini.amf.mutator.IMutationTarget;
+import com.fteotini.amf.mutator.MutationTarget;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.MethodInfo;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-abstract class MethodOperatorTargetsFinderBase<A extends Annotation> extends OperatorTargetsFinderBase<A, MethodInfo> {
+class MethodOperatorTargetsFinder extends OperatorTargetsFinderBase<MethodInfo> {
     private static String[] getMethodParameterTypes(MethodInfo methodInfo) {
         return Arrays.stream(methodInfo.getParameterInfo())
                 .map(x -> x.getTypeDescriptor().toString())
@@ -18,8 +17,8 @@ abstract class MethodOperatorTargetsFinderBase<A extends Annotation> extends Ope
     }
 
     @Override
-    protected final MutationDetailsInterface getMutationDetails(MethodInfo entityInfo) {
-        return MutationDetails.ForMethod(entityInfo.getName(), getMethodParameterTypes(entityInfo), entityInfo.getClassInfo().getName());
+    protected final IMutationTarget getMutationDetails(MethodInfo entityInfo) {
+        return MutationTarget.ForMethod(entityInfo.getName(), getMethodParameterTypes(entityInfo), entityInfo.getClassInfo().getName());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators.Base;
 
-import com.fteotini.amf.mutator.MutationDetailsInterface;
+import com.fteotini.amf.mutator.IMutationTarget;
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.field.FieldDescription;
@@ -31,7 +31,7 @@ public abstract class FieldOperator extends MemberOperator<FieldIdentifier, Fiel
     }
 
     @Override
-    protected final Optional<FieldIdentifier> getMutationTarget(MutationDetailsInterface mutationDetailsInterface) {
+    protected final Optional<FieldIdentifier> getMutationTarget(IMutationTarget mutationDetailsInterface) {
         return mutationDetailsInterface.getFieldIdentifier();
     }
 }

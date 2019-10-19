@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators.Base;
 
-import com.fteotini.amf.mutator.MutationDetailsInterface;
+import com.fteotini.amf.mutator.IMutationTarget;
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -21,7 +21,7 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier> {
 
     @Test
     void Given_an_empty_optional_returned_from_getMutationTarget_then_it_should_not_do_anything() {
-        sut.runMutation(mock(MutationDetailsInterface.class));
+        sut.runMutation(mock(IMutationTarget.class));
 
         verifyZeroInteractions(buddy, reloadingStrategy);
     }
@@ -88,7 +88,7 @@ class OperatorBaseTest extends AbstractOperatorTest<ClassIdentifier> {
         }
 
         @Override
-        protected Optional<ClassIdentifier> getMutationTarget(MutationDetailsInterface mutationDetailsInterface) {
+        protected Optional<ClassIdentifier> getMutationTarget(IMutationTarget mutationDetailsInterface) {
             return mutationDetailsInterface.getClassIdentifier();
         }
 

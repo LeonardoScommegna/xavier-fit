@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Operators.Base;
 
-import com.fteotini.amf.mutator.MutationDetailsInterface;
+import com.fteotini.amf.mutator.IMutationTarget;
 import com.fteotini.amf.mutator.MutationIdentifiers.Identifier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.lenient;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 abstract class AbstractOperatorTest<T extends Identifier> {
     @Mock
-    protected MutationDetailsInterface mutationDetails;
+    protected IMutationTarget mutationDetails;
     @Mock(answer = Answers.RETURNS_SELF)
     protected DynamicType.Builder<OperatorBaseTest> buddyBuilder;
     @Mock

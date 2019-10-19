@@ -1,18 +1,17 @@
 package com.fteotini.amf.mutator.Operators.Finders;
 
-import com.fteotini.amf.mutator.MutationDetails;
-import com.fteotini.amf.mutator.MutationDetailsInterface;
+import com.fteotini.amf.mutator.IMutationTarget;
+import com.fteotini.amf.mutator.MutationTarget;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.FieldInfo;
 
-import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 
-abstract class FieldOperatorTargetsFinderBase<A extends Annotation> extends OperatorTargetsFinderBase<A, FieldInfo> {
+class FieldOperatorTargetsFinder extends OperatorTargetsFinderBase<FieldInfo> {
     @Override
-    protected final MutationDetailsInterface getMutationDetails(FieldInfo entityInfo) {
-        return MutationDetails.ForField(entityInfo.getName(), entityInfo.getClassInfo().getName());
+    protected final IMutationTarget getMutationDetails(FieldInfo entityInfo) {
+        return MutationTarget.ForField(entityInfo.getName(), entityInfo.getClassInfo().getName());
     }
 
     @Override
