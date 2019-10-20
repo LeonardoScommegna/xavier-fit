@@ -11,7 +11,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import java.lang.annotation.Annotation;
 
-public class SessionToRequestScopedOnType extends MutatorsBuilderBase {
+public class SwitchSessionToRequestScopedOnType extends MutatorsBuilderBase {
     @Override
     protected OperatorTargetsFinder targetsFinder() {
         return new ClassOperatorTargetsFinder();
@@ -29,6 +29,6 @@ public class SessionToRequestScopedOnType extends MutatorsBuilderBase {
 
     @Override
     protected String mutationOperationId() {
-        return "[TYPE Mutation] Switch @SessionScoped --> @RequestScoped";
+        return "[SWITCH][TYPE] @SessionScoped --> @RequestScoped";
     }
 }

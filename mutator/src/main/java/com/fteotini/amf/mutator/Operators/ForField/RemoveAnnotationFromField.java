@@ -12,7 +12,7 @@ import java.lang.annotation.Annotation;
 public class RemoveAnnotationFromField<K extends Annotation> extends FieldOperator {
     private final Class<K> annotationClass;
 
-    RemoveAnnotationFromField(ByteBuddy byteBuddy, Class<K> annotationClass) {
+    public RemoveAnnotationFromField(ByteBuddy byteBuddy, Class<K> annotationClass) {
         super(byteBuddy);
         this.annotationClass = annotationClass;
     }

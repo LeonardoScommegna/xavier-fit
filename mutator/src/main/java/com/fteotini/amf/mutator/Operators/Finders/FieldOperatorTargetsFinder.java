@@ -8,7 +8,7 @@ import io.github.classgraph.FieldInfo;
 
 import java.util.stream.Stream;
 
-class FieldOperatorTargetsFinder extends OperatorTargetsFinderBase<FieldInfo> {
+public class FieldOperatorTargetsFinder extends OperatorTargetsFinderBase<FieldInfo> {
     @Override
     protected final IMutationTarget getMutationDetails(FieldInfo entityInfo) {
         return MutationTarget.ForField(entityInfo.getName(), entityInfo.getClassInfo().getName());
