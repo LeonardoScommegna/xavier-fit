@@ -13,9 +13,9 @@ import java.util.Optional;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 import static net.bytebuddy.matcher.ElementMatchers.takesArguments;
 
-abstract class MethodOperator extends MemberOperator<MethodIdentifier, MethodDescription> {
+public abstract class MethodOperator extends MemberOperator<MethodIdentifier, MethodDescription> {
 
-    MethodOperator(ByteBuddy byteBuddy) {
+    protected MethodOperator(ByteBuddy byteBuddy) {
         super(byteBuddy);
     }
 
