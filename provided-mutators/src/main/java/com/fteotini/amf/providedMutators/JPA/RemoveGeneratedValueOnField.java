@@ -4,7 +4,7 @@ import com.fteotini.amf.mutator.MutatorsBuilderBase;
 import com.fteotini.amf.mutator.Operators.Base.Operator;
 import com.fteotini.amf.mutator.Operators.Finders.FieldOperatorTargetsFinder;
 import com.fteotini.amf.mutator.Operators.Finders.OperatorTargetsFinder;
-import com.fteotini.amf.mutator.Operators.RemoveAnnotationFromField;
+import com.fteotini.amf.mutator.Operators.ForField.RemoveAnnotationFromField;
 import net.bytebuddy.ByteBuddy;
 
 import javax.persistence.GeneratedValue;

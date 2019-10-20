@@ -9,7 +9,7 @@ import io.github.classgraph.MethodInfo;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-class MethodOperatorTargetsFinder extends OperatorTargetsFinderBase<MethodInfo> {
+public class MethodOperatorTargetsFinder extends OperatorTargetsFinderBase<MethodInfo> {
     private static String[] getMethodParameterTypes(MethodInfo methodInfo) {
         return Arrays.stream(methodInfo.getParameterInfo())
                 .map(x -> x.getTypeDescriptor().toString())

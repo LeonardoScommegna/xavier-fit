@@ -4,7 +4,7 @@ import com.fteotini.amf.mutator.MutatorsBuilderBase;
 import com.fteotini.amf.mutator.Operators.Base.Operator;
 import com.fteotini.amf.mutator.Operators.Finders.ClassOperatorTargetsFinder;
 import com.fteotini.amf.mutator.Operators.Finders.OperatorTargetsFinder;
-import com.fteotini.amf.mutator.Operators.SwitchClassAnnotation;
+import com.fteotini.amf.mutator.Operators.ForClass.SwitchClassAnnotation;
 import net.bytebuddy.ByteBuddy;
 
 import javax.enterprise.context.RequestScoped;
