@@ -13,8 +13,7 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.pool.TypePool;
 
-import static net.bytebuddy.matcher.ElementMatchers.hasDescriptor;
-import static net.bytebuddy.matcher.ElementMatchers.named;
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 public class ForMethod extends BaseClassVisitorWrapper {
 
@@ -44,7 +43,7 @@ public class ForMethod extends BaseClassVisitorWrapper {
         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
             var visitor = super.visitMethod(access, name, descriptor, signature, exceptions);
 
-            var currentMethod = methods.filter(named(name).and(hasDescriptor(descriptor))).getOnly();
+            var currentMethod = getCurrentVisitedMethod(name, descriptor);
             if (visitor != null && matcher.matches(currentMethod)) {
                 visitor = new MethodVisitor(AsmConfig.ASM_VERSION, visitor) {
                     @Override
@@ -55,6 +54,16 @@ public class ForMethod extends BaseClassVisitorWrapper {
             }
 
             return visitor;
+        }
+
+        private MethodDescription getCurrentVisitedMethod(String name, String descriptor) {
+            MethodList<?> filtered;
+            if (name.equals("<init>")) {
+                filtered = methods.filter(isConstructor().and(hasDescriptor(descriptor)));
+            } else {
+                filtered = methods.filter(named(name).and(hasDescriptor(descriptor)));
+            }
+            return filtered.getOnly();
         }
     }
 }
