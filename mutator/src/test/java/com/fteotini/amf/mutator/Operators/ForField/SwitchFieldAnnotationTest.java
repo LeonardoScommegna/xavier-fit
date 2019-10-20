@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.ForField;
 
 import com.fteotini.amf.mutator.MutationTarget;
 import net.bytebuddy.ByteBuddy;
@@ -16,22 +16,22 @@ import java.lang.annotation.Target;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("IntegrationTest")
-class SwitchClassAnnotationTest {
+class SwitchFieldAnnotationTest {
     @BeforeAll
     static void setUp() {
         ByteBuddyAgent.install();
     }
 
     @Test
-    void it_can_switch_class_annotations() throws IOException {
-        try (var sut = new SwitchClassAnnotation<>(new ByteBuddy(), From.class, To.class)) {
-            sut.runMutation(MutationTarget.ForClass("com.fteotini.amf.mutator.Operators.SwitchClassAnnotationTest$Dummy"));
+    void it_can_switch_field_annotations() throws IOException, NoSuchFieldException {
+        try (var sut = new SwitchFieldAnnotation<>(new ByteBuddy(), From.class, To.class)) {
+            sut.runMutation(MutationTarget.ForField("foo", "com.fteotini.amf.mutator.Operators.ForField.SwitchFieldAnnotationTest$Dummy"));
 
-            var clazz = Dummy.class;
+            var field = Dummy.class.getDeclaredField("foo");
 
-            assertThat(clazz.isAnnotationPresent(From.class)).isFalse();
-            assertThat(clazz.isAnnotationPresent(To.class)).isTrue();
-            assertThat(clazz.getAnnotation(To.class).value()).isEqualTo(3);
+            assertThat(field.isAnnotationPresent(From.class)).isFalse();
+            assertThat(field.isAnnotationPresent(To.class)).isTrue();
+            assertThat(field.getAnnotation(To.class).value()).isEqualTo(3);
         }
     }
 
@@ -47,8 +47,9 @@ class SwitchClassAnnotationTest {
         int value() default 3;
     }
 
-    @From
     private static class Dummy {
+        @From
+        String foo;
     }
     //</editor-fold>
 }

@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.ForClass;
 
 import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
 import com.fteotini.amf.mutator.Operators.Base.ClassOperator;

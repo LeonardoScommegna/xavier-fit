@@ -1,4 +1,4 @@
-package com.fteotini.amf.mutator.Operators;
+package com.fteotini.amf.mutator.Operators.ForField;
 
 import com.fteotini.amf.mutator.MutationTarget;
 import net.bytebuddy.ByteBuddy;
@@ -33,7 +33,7 @@ class ReplaceFieldAnnotationValuesTest {
 
         try (var sut = new ReplaceFieldAnnotationValues<>(new ByteBuddy(), DummyAnnotation.class, map)) {
             var fieldName = "foo";
-            sut.runMutation(MutationTarget.ForField(fieldName, "com.fteotini.amf.mutator.Operators.ReplaceFieldAnnotationValuesTest$Dummy"));
+            sut.runMutation(MutationTarget.ForField(fieldName, "com.fteotini.amf.mutator.Operators.ForField.ReplaceFieldAnnotationValuesTest$Dummy"));
 
             var fieldAnn = Dummy.class.getDeclaredField(fieldName).getAnnotation(DummyAnnotation.class);
             assertThat(fieldAnn.value()).isEqualTo("pluto");
