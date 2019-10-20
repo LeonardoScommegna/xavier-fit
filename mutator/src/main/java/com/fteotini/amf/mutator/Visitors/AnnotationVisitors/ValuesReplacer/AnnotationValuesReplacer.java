@@ -6,6 +6,7 @@ import net.bytebuddy.jar.asm.AnnotationVisitor;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -110,10 +111,22 @@ public class AnnotationValuesReplacer<K extends Annotation> implements Annotatio
         }
 
         private void visitArrayElements(AnnotationVisitor visitor, Object newValue) {
-            var arrayElements = (Object[]) newValue;
+            var arrayElements = convertToArrayOfObjs(newValue);
             for (var element : arrayElements) {
                 visitor.visit(null, element);
             }
+        }
+
+        private Object[] convertToArrayOfObjs(Object obj) {
+            if (obj instanceof Object[])
+                return (Object[]) obj;
+
+            var arrLength = Array.getLength(obj);
+            var resultingArr = new Object[arrLength];
+            for (int i = 0; i < arrLength; i++) {
+                resultingArr[i] = Array.get(obj, i);
+            }
+            return resultingArr;
         }
 
         private void visitEnum() {
