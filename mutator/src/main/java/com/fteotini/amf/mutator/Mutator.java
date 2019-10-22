@@ -3,10 +3,9 @@ package com.fteotini.amf.mutator;
 import com.fteotini.amf.mutator.Operators.Base.Operator;
 import net.bytebuddy.ByteBuddy;
 
-import java.io.Serializable;
 import java.util.function.Function;
 
-public final class Mutator implements Serializable {
+public final class Mutator implements IMutator {
     private static final long serialVersionUID = 42L;
 
     private final IMutationTarget mutationDetails;
@@ -19,15 +18,18 @@ public final class Mutator implements Serializable {
         this.uniqueMutationOperationId = uniqueMutationOperationId;
     }
 
+    @Override
     public IMutationTarget getMutationDetails() {
         return mutationDetails;
     }
 
+    @Override
     public String getUniqueMutationOperationId() {
         return uniqueMutationOperationId;
     }
 
-    public void runMutation(ByteBuddy buddy) {
-        operatorFactory.apply(buddy).runMutation(mutationDetails);
+    @Override
+    public Operator makeOperator(ByteBuddy buddy) {
+        return operatorFactory.apply(buddy);
     }
 }

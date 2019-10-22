@@ -7,5 +7,5 @@ import java.util.Set;
 public interface MutatorsBuilder {
     String uniqueMutationOperationId();
 
-    Set<Mutator> buildMutators(final ScanResult scanResult);
+    Set<IMutator> buildMutators(final ScanResult scanResult);
 }

@@ -1,6 +1,6 @@
 package com.fteotini.amf.mutator.Container;
 
-import com.fteotini.amf.mutator.Mutator;
+import com.fteotini.amf.mutator.IMutator;
 import com.fteotini.amf.mutator.MutatorsBuilder;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public final class MutatorsContainer {
     private final List<MutatorsBuilder> mutatorsBuilders;
-    private Map<String, Set<Mutator>> mutators;
+    private Map<String, Set<IMutator>> mutators;
 
     private MutatorsContainer(List<MutatorsBuilder> mutatorsBuilders) {
         this.mutatorsBuilders = mutatorsBuilders;
@@ -27,11 +27,11 @@ public final class MutatorsContainer {
         return loaded;
     }
 
-    public Set<Mutator> getAll() {
+    public Set<IMutator> getAll() {
         return mutators.values().stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableSet());
     }
 
-    public Set<Mutator> getMutatorsByMutationId(String mutationId) {
+    public Set<IMutator> getMutatorsByMutationId(String mutationId) {
         return mutators.get(mutationId);
     }
 

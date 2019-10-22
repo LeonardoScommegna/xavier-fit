@@ -19,7 +19,7 @@ public abstract class MutatorsBuilderBase implements MutatorsBuilder {
     }
 
     @Override
-    public Set<Mutator> buildMutators(final ScanResult scanResult) {
+    public Set<IMutator> buildMutators(final ScanResult scanResult) {
         var details = targetsFinder().findMutations(scanResult, currentAnnotation());
         return details.stream()
                 .map(detail -> new Mutator(uniqueMutationOperationId(), detail, this::operator))
