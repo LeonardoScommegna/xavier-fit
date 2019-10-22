@@ -13,6 +13,7 @@
         <module>commons</module>
         <module>mutator</module>
         <module>provided-mutators</module>
+        <module>maven-plugin</module>
     </modules>
 
     <name>annotation.mutation.framework</name>
