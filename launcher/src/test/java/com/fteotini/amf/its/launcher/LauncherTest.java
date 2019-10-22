@@ -7,6 +7,11 @@ import com.fteotini.amf.commons.tester.MethodUnderTest;
 import com.fteotini.amf.its.launcher.DONTRUN.DummyTest;
 import com.fteotini.amf.launcher.MinionProcessBuilder;
 import com.fteotini.amf.launcher.minion.MinionArgs;
+import com.fteotini.amf.mutator.IMutationTarget;
+import com.fteotini.amf.mutator.IMutator;
+import com.fteotini.amf.mutator.Operators.Base.Operator;
+import net.bytebuddy.ByteBuddy;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -19,9 +24,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("IntegrationTest")
 class LauncherTest {
+    private IMutator mutator;
+
+    @BeforeEach
+    void setUp() {
+        mutator = new DummyMutator();
+    }
+
     @Test
     void it_can_launch_a_single_test_in_a_forked_jvm() throws NoSuchMethodException, IOException, ExecutionException, InterruptedException {
-        var args = MinionArgs.ForSingleMethod(new MethodUnderTest(DummyTest.class, DummyTest.class.getDeclaredMethod("it_is_green")));
+        var args = MinionArgs.ForSingleMethod(new MethodUnderTest(DummyTest.class, DummyTest.class.getDeclaredMethod("it_is_green")), mutator);
 
         var minionResult = new MinionProcessBuilder(args)
                 .start()
@@ -46,7 +58,7 @@ class LauncherTest {
 
     @Test
     void it_can_run_a_suite_in_a_forked_jvm() throws IOException, ExecutionException, InterruptedException {
-        var args = MinionArgs.ForEntireSuite(null, Set.of("com.fteotini.amf.its.launcher.DONTRUN"));
+        var args = MinionArgs.ForEntireSuite(null, Set.of("com.fteotini.amf.its.launcher.DONTRUN"), mutator);
         var minionResult = new MinionProcessBuilder(args)
                 .start()
                 .get();
@@ -83,5 +95,32 @@ class LauncherTest {
 
     private Optional<TestEntity> getTestEntityByName(Set<TestEntity> testEntities, String entityName) {
         return testEntities.stream().filter(e -> e.getEntityName().equals(entityName)).findFirst();
+    }
+
+    private static class DummyMutator implements IMutator {
+        @Override
+        public IMutationTarget getMutationDetails() {
+            return null;
+        }
+
+        @Override
+        public String getUniqueMutationOperationId() {
+            return null;
+        }
+
+        @Override
+        public Operator makeOperator(ByteBuddy buddy) {
+            return new Operator() {
+                @Override
+                public void runMutation(IMutationTarget mutation) {
+
+                }
+
+                @Override
+                public void close() throws IOException {
+
+                }
+            };
+        }
     }
 }

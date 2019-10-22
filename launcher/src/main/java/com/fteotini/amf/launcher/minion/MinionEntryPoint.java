@@ -4,6 +4,8 @@ import com.fteotini.amf.launcher.MinionInputStreamHandler;
 import com.fteotini.amf.launcher.MinionOutputStreamHandler;
 import com.fteotini.amf.tester.TestDiscoveryOptions;
 import com.fteotini.amf.tester.providers.JUnit5.JUnit5TestRunnerFactory;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.agent.ByteBuddyAgent;
 
 import java.io.IOException;
 import java.util.Set;
@@ -17,14 +19,14 @@ public class MinionEntryPoint {
         this.outputStreamHandler = outputStreamHandler;
     }
 
-    private void run() throws IOException, ClassNotFoundException {
-        var args = inputStreamHandler.readObject(MinionArgs.class);
-
-        var testRunner = new JUnit5TestRunnerFactory().createTestRunner(buildDiscoveryOptions(args));
-
-        var testExecutionSummary = testRunner.run();
-
-        outputStreamHandler.writeObject(testExecutionSummary);
+    public static void main(String[] args) {
+        ByteBuddyAgent.install();
+        var minion = new MinionEntryPoint(new MinionInputStreamHandler(System.in), new MinionOutputStreamHandler(System.out));
+        try {
+            minion.run();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private TestDiscoveryOptions buildDiscoveryOptions(MinionArgs args) {
@@ -37,12 +39,18 @@ public class MinionEntryPoint {
         return discoveryOptions;
     }
 
-    public static void main(String[] args) {
-        var minion = new MinionEntryPoint(new MinionInputStreamHandler(System.in), new MinionOutputStreamHandler(System.out));
-        try {
-            minion.run();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+    private void run() throws IOException, ClassNotFoundException {
+        var args = inputStreamHandler.readObject(MinionArgs.class);
+
+        var mutator = args.getMutator();
+        try (var operator = mutator.makeOperator(new ByteBuddy())) {
+            operator.runMutation(mutator.getMutationDetails());
+
+            var testRunner = new JUnit5TestRunnerFactory().createTestRunner(buildDiscoveryOptions(args));
+            var testExecutionSummary = testRunner.run();
+
+            outputStreamHandler.writeObject(testExecutionSummary);
         }
+
     }
 }
