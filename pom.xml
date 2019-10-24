@@ -14,6 +14,7 @@
         <module>mutator</module>
         <module>provided-mutators</module>
         <module>maven-plugin</module>
+        <module>maven-plugin-integration</module>
     </modules>
 
     <name>annotation.mutation.framework</name>
@@ -129,6 +130,20 @@
                             <!--            <buildDirectory>${project.build.directory}</buildDirectory>-->
                         </systemPropertyVariables>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M3</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
