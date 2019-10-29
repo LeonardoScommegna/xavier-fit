@@ -4,6 +4,7 @@ import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
 import com.fteotini.amf.mutator.MutationIdentifiers.MethodIdentifier;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public final class MutationTarget implements IMutationTarget {
@@ -52,5 +53,21 @@ public final class MutationTarget implements IMutationTarget {
     @Override
     public Optional<FieldIdentifier> getFieldIdentifier() {
         return Optional.ofNullable(fieldIdentifier);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MutationTarget that = (MutationTarget) o;
+        return targetElementType == that.targetElementType &&
+                Objects.equals(classIdentifier, that.classIdentifier) &&
+                Objects.equals(methodIdentifier, that.methodIdentifier) &&
+                Objects.equals(fieldIdentifier, that.fieldIdentifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetElementType, classIdentifier, methodIdentifier, fieldIdentifier);
     }
 }

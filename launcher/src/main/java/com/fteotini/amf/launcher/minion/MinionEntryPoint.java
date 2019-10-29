@@ -8,6 +8,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class MinionEntryPoint {
@@ -41,16 +42,19 @@ public class MinionEntryPoint {
 
     private void run() throws IOException, ClassNotFoundException {
         var args = inputStreamHandler.readObject(MinionArgs.class);
-
         var mutator = args.getMutator();
+
+        var mutationResults = new ArrayList<MutationResult>();
+
         try (var operator = mutator.makeOperator(new ByteBuddy())) {
             operator.runMutation(mutator.getMutationDetails());
 
             var testRunner = new JUnit5TestRunnerFactory().createTestRunner(buildDiscoveryOptions(args));
             var testExecutionSummary = testRunner.run();
 
-            outputStreamHandler.writeObject(testExecutionSummary);
+            mutationResults.add(new MutationResult(mutator.getMutationDetails(), mutator.getUniqueMutationOperationId(), testExecutionSummary.getTestContainers()));
         }
 
+        outputStreamHandler.writeObject(mutationResults.toArray(MutationResult[]::new));
     }
 }

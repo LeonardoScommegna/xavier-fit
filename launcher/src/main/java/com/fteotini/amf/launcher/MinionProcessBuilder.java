@@ -14,6 +14,7 @@ import org.zeroturnaround.exec.stream.ExecuteStreamHandler;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,7 +45,7 @@ public class MinionProcessBuilder {
         var invoker = new ProcessInvoker(buildProcessArgs(), buildCommunicationHandler(new SendInitialData(minionArgs), receiveData));
 
         return Futurity.shift(invoker.startMinionProcess())
-                .thenApply(processResult -> new MinionResult(processResult, receiveData.receive()));
+                .thenApply(processResult -> new MinionResult(processResult, Arrays.asList(receiveData.receive())));
     }
 
     private ExecuteStreamHandler buildCommunicationHandler(SendInitialData sendInitialData, ReceiveData receiveData) {

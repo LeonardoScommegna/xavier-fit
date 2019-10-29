@@ -1,22 +1,23 @@
 package com.fteotini.amf.launcher.minion;
 
-import com.fteotini.amf.commons.tester.ExecutionSummary.TestExecutionSummary;
 import org.zeroturnaround.exec.ProcessResult;
+
+import java.util.List;
 
 public class MinionResult {
     private final ProcessResult processResult;
-    private final TestExecutionSummary testExecutionSummary;
+    private final List<MutationResult> mutationResults;
 
-    public MinionResult(final ProcessResult processResult, final TestExecutionSummary testExecutionSummary) {
+    public MinionResult(final ProcessResult processResult, final List<MutationResult> mutationResults) {
         this.processResult = processResult;
-        this.testExecutionSummary = testExecutionSummary;
+        this.mutationResults = mutationResults;
     }
 
     public ProcessResult getProcessResult() {
         return processResult;
     }
 
-    public TestExecutionSummary getTestExecutionSummary() {
-        return testExecutionSummary;
+    public List<MutationResult> getMutationResults() {
+        return mutationResults;
     }
 }

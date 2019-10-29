@@ -41,7 +41,7 @@ class LauncherTest {
 
         assertThat(minionResult.getProcessResult().getExitValue()).isEqualTo(0);
 
-        var classesUnderTest = minionResult.getTestExecutionSummary().getTestContainers();
+        var classesUnderTest = minionResult.getMutationResults().get(0).getTestContainers();
         assertThat(classesUnderTest)
                 .hasSize(1)
                 .hasOnlyOneElementSatisfying(c -> assertThat(c.getEntityName()).isEqualTo(DummyTest.class.getSimpleName()));
@@ -65,7 +65,7 @@ class LauncherTest {
 
         assertThat(minionResult.getProcessResult().getExitValue()).isEqualTo(0);
 
-        var classesUnderTest = minionResult.getTestExecutionSummary().getTestContainers();
+        var classesUnderTest = minionResult.getMutationResults().get(0).getTestContainers();
         assertThat(classesUnderTest)
                 .hasSize(2)
                 .extracting(TestEntity::getEntityName).containsExactlyInAnyOrder("DummyTest", "Dummy2Test");
