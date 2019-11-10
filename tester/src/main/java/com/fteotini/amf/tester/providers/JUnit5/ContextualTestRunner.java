@@ -21,6 +21,9 @@ class ContextualTestRunner {
     }
 
     <T> T run(Supplier<T> runnable) {
+        if (additionalClassPaths.isEmpty())
+            return runnable.get();
+
         var currentThread = currentThreadProvider.get();
 
         var original = currentThread.getContextClassLoader();

@@ -27,5 +27,11 @@
             <artifactId>classgraph</artifactId>
             <version>4.8.47</version>
         </dependency>
+        <dependency>
+            <groupId>com.fteotini</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -1,6 +1,10 @@
 package com.fteotini.amf.mutator.MutationIdentifiers;
 
-public class MethodIdentifier implements Identifier {
+import java.io.Serializable;
+
+public class MethodIdentifier implements Identifier, Serializable {
+    private static final long serialVersionUID = 42L;
+
     private final String methodSimpleName;
     private final String[] parametersType;
     private final ClassIdentifier belongingClass;

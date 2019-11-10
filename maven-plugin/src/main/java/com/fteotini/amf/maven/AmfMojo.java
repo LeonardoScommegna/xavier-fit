@@ -5,6 +5,7 @@ import com.fteotini.amf.launcher.minion.MinionArgs;
 import com.fteotini.amf.launcher.minion.MinionResult;
 import com.fteotini.amf.launcher.minion.MutationResult;
 import com.fteotini.amf.mutator.Container.MutatorsContainer;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -22,16 +23,21 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@Mojo(name = "mutateAnnotatationsTest", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "mutateAnnotatationsTest", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
 public class AmfMojo extends AbstractMojo {
     /**
      * <i>Internal</i>: Project to interact with.
      */
     @Parameter(property = "project", readonly = true, required = true)
     private MavenProject project;
+
+    @Parameter(property = "plugin.artifactMap", readonly = true, required = true)
+    private Map<String, Artifact> pluginArtifactMap;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -55,10 +61,11 @@ public class AmfMojo extends AbstractMojo {
                 getLog().info(mutator.getUniqueMutationOperationId());
                 var args = MinionArgs.ForEntireSuite(mutator);
                 try {
-                    resultFutures.add(new MinionProcessBuilder(args).start());
+                    resultFutures.add(new MinionProcessBuilder(args).withDebugger(50005).start());
                 } catch (IOException e) {
                     throw new MojoExecutionException("Forking error", e);
                 }
+                break;
             }
 
             var jvmResults = resultFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
@@ -79,10 +86,13 @@ public class AmfMojo extends AbstractMojo {
     }
 
     private ClassLoader buildNewClassLoader(ClassLoader currentCL) throws DependencyResolutionRequiredException {
-        var urls = this.project.getCompileClasspathElements()
-                .stream()
-                .map(AmfMojo::toURL).toArray(URL[]::new);
+        var urls = Stream.concat(this.project.getTestClasspathElements().stream(), artifactsClassPath().stream())
+                .map(AmfMojo::toURL).distinct().toArray(URL[]::new);
 
         return URLClassLoader.newInstance(urls, currentCL);
+    }
+
+    private List<String> artifactsClassPath() {
+        return this.pluginArtifactMap.values().stream().map(artifact -> artifact.getFile().getAbsolutePath()).collect(Collectors.toList());
     }
 }

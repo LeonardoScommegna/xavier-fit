@@ -3,18 +3,19 @@ package com.fteotini.amf.commons.util;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClassPathResolverTest {
     @Test
     void It_should_return_the_currently_loaded_classPath() {
-        var currentlyLoadedCP = System.getProperty("java.class.path").split(File.pathSeparator);
+        var currentlyLoadedCP = Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparator));
 
         var result = new ClassPathResolver().getClassPaths();
 
-        assertThat(result).hasSameSizeAs(currentlyLoadedCP)
-                .anyMatch(p -> p.toString().equals(currentlyLoadedCP[0]));
+        assertThat(result).extracting(Path::toString).containsAll(currentlyLoadedCP);
     }
 
     @Test

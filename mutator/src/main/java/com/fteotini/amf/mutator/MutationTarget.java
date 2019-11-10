@@ -4,10 +4,13 @@ import com.fteotini.amf.mutator.MutationIdentifiers.ClassIdentifier;
 import com.fteotini.amf.mutator.MutationIdentifiers.FieldIdentifier;
 import com.fteotini.amf.mutator.MutationIdentifiers.MethodIdentifier;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class MutationTarget implements IMutationTarget {
+public final class MutationTarget implements IMutationTarget, Serializable {
+    private static final long serialVersionUID = 42L;
+
     private final OperatorTarget targetElementType;
     private final ClassIdentifier classIdentifier;
     private final MethodIdentifier methodIdentifier;

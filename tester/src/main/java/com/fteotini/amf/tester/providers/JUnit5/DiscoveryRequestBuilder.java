@@ -59,7 +59,7 @@ class DiscoveryRequestBuilder {
     }
 
     private List<? extends DiscoverySelector> createClasspathRootSelectors() {
-        var classpath = new HashSet<>(new ClassPathResolver().getClassPaths());
+        var classpath = new ClassPathResolver().getClassPaths().stream().filter(p -> p.toFile().isDirectory()).collect(Collectors.toCollection(HashSet::new));
         if (!options.getAdditionalClassPaths().isEmpty())
             classpath.addAll(options.getAdditionalClassPaths());
 

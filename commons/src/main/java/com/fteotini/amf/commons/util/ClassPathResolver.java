@@ -1,5 +1,7 @@
 package com.fteotini.amf.commons.util;
 
+import io.github.classgraph.ClassGraph;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -21,7 +23,7 @@ public class ClassPathResolver {
     }
 
     private static Set<Path> getCurrentClassPathElements() {
-        var currentClassPath = System.getProperty("java.class.path");
+        var currentClassPath = new ClassGraph().getClasspath();
         var classPathElements = currentClassPath.split(File.pathSeparator);
         return Arrays.stream(classPathElements)
                 .map(Path::of)

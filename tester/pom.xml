@@ -30,6 +30,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.fteotini</groupId>
             <artifactId>commons</artifactId>
             <version>1.0-SNAPSHOT</version>

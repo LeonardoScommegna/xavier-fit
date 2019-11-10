@@ -59,18 +59,25 @@ class ContextualTestRunnerTest {
 
     @Test
     void Given_a_not_throwing_supplier_then_it_should_reset_the_class_loader_to_the_original_one() {
-        buildSut().run(() -> 1);
+        buildSut(Set.of(Path.of("foo"))).run(() -> 1);
 
         verify(currentThread).setContextClassLoader(dummyClassLoader);
     }
 
     @Test
     void Given_a_throwing_supplier_then_it_should_reset_the_class_loader_to_the_original_one() {
-        assertThatExceptionOfType(Exception.class).isThrownBy(() -> buildSut().run(() -> {
+        assertThatExceptionOfType(Exception.class).isThrownBy(() -> buildSut(Set.of(Path.of("foo"))).run(() -> {
             throw new RuntimeException();
         }));
 
         verify(currentThread).setContextClassLoader(dummyClassLoader);
+    }
+
+    @Test
+    void Given_an_empty_class_path_set_then_it_should_not_touch_the_classLoader() {
+        buildSut().run(() -> 1);
+
+        verifyZeroInteractions(currentThread);
     }
 
     @SuppressWarnings("unchecked")
@@ -78,7 +85,7 @@ class ContextualTestRunnerTest {
     void Running_should_call_the_correctMethods_in_order() {
         var supplier = mock(Supplier.class, AdditionalAnswers.delegatesTo((Supplier<Integer>) () -> 1));
 
-        buildSut().run(supplier);
+        buildSut(Set.of(Path.of("foo"))).run(supplier);
 
         var orderVerifier = inOrder(currentThread, supplier);
         orderVerifier.verify(currentThread).getContextClassLoader();

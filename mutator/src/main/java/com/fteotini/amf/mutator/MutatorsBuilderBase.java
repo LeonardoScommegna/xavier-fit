@@ -5,12 +5,14 @@ import com.fteotini.amf.mutator.Operators.Finders.OperatorTargetsFinder;
 import io.github.classgraph.ScanResult;
 import net.bytebuddy.ByteBuddy;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public abstract class MutatorsBuilderBase implements MutatorsBuilder {
+public abstract class MutatorsBuilderBase implements MutatorsBuilder, Serializable {
+    private static final long serialVersionUID = 42L;
     private final UUID uuid = UUID.randomUUID();
 
     @Override

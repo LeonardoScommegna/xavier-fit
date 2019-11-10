@@ -118,8 +118,8 @@ class DiscoveryRequestBuilderTest {
     }
 
     @Test
-    void Given_an_option_obj_for_entire_suite_then_the_classPathRootSelector_must_contain_the_current_classPath() {
-        var currentClassPath = currentClassPath();
+    void Given_an_option_obj_for_entire_suite_then_the_classPathRootSelector_must_contain_the_current_classPath_directory() {
+        var currentClassPath = currentClassPathDirectories();
         var options = new TestDiscoveryOptions(ENTIRE_SUITE);
 
         var result = new DiscoveryRequestBuilder(options).build();
@@ -132,9 +132,9 @@ class DiscoveryRequestBuilderTest {
                 .contains(currentClassPath);
     }
 
-    private static URI[] currentClassPath() {
+    private static URI[] currentClassPathDirectories() {
         return Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
-                .map(str -> Path.of(str).toUri()).toArray(URI[]::new);
+                .map(str -> Path.of(str).toFile()).filter(File::isDirectory).map(File::toURI).toArray(URI[]::new);
     }
 
     static class DummyTestClass {
