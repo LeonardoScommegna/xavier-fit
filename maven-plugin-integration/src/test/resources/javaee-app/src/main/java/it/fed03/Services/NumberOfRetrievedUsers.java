@@ -1,4 +1,4 @@
-package it.fed03;
+package it.fed03.Services;
 
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;

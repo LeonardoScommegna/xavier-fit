@@ -1,8 +1,8 @@
-package it.fed03.rest;
+package it.fed03.Controllers;
 
 import it.fed03.DAOs.UserDao;
 import it.fed03.Models.User;
-import it.fed03.NumberOfRetrievedUsers;
+import it.fed03.Services.NumberOfRetrievedUsers;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -24,9 +24,9 @@ public class UsersController {
     }
 
     @POST
-    public User createNewUser(User user) {
+    public String createNewUser(User user) {
         userDao.saveUser(user);
-        return user;
+        return user.getName();
     }
 
     @GET

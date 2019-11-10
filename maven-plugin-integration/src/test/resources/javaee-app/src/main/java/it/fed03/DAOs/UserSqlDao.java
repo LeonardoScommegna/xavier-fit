@@ -1,7 +1,7 @@
 package it.fed03.DAOs;
 
 import it.fed03.Models.User;
-import it.fed03.NumberOfRetrievedUsers;
+import it.fed03.Services.NumberOfRetrievedUsers;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

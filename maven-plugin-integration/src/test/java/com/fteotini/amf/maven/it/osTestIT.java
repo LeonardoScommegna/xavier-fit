@@ -15,9 +15,10 @@ public class osTestIT {
         var tmpDir = ResourceExtractor.simpleExtractResources(getClass(), "/javaee-app");
         var verifiere = new Verifier(tmpDir.getAbsolutePath());
         //verifiere.setMavenDebug(true);
-        verifiere.executeGoal("compile");
+        verifiere.addCliOption("-DskipTests");
+        verifiere.executeGoal("test");
         verifiere.setAutoclean(false);
-        //verifiere.setDebugJvm(true);
+        verifiere.setDebugJvm(true);
         verifiere.executeGoal("amf:mutateAnnotatationsTest");
     }
 }
