@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+/**
+ * Main class of the forked JVM
+ *
+ * @author Federico Teotini (teotini.federico@gmail.com)
+ */
 public class MinionEntryPoint {
     private final MinionInputStreamHandler inputStreamHandler;
     private final MinionOutputStreamHandler outputStreamHandler;

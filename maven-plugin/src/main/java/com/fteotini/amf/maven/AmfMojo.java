@@ -29,6 +29,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class is the Maven entry point
+ *
+ * @author Federico Teotini (teotini.federico@gmail.com)
+ */
 @Mojo(name = "mutateAnnotatationsTest", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
 public class AmfMojo extends AbstractMojo {
     private static final String HORIZONTAL_RULE = "-".repeat(20);

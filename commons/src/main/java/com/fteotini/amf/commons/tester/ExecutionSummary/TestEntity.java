@@ -5,6 +5,16 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Represents the outcome of a test in a serializable way.
+ *
+ * This class contains information like the result of the test, its exception if failed, its skip reason if skipped and
+ * its {@link TestEntityType}.
+ *
+ * If it is a Class, then it contains a reference to a set of child {@link TestEntity}.
+ *
+ * @author Federico Teotini (teotini.federico@gmail.com)
+ */
 public final class TestEntity implements Serializable {
     private static final long serialVersionUID = 42L;
 

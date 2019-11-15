@@ -6,6 +6,11 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * Represents a method in a serializable way
+ *
+ * @author Federico Teotini (teotini.federico@gmail.com)
+ */
 public class MethodUnderTest implements Serializable {
     private static final long serialVersionUID = 42L;
 
