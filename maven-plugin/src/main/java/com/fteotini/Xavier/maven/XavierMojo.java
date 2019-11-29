@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  *
  * @author Federico Teotini (teotini.federico@gmail.com)
  */
-@Mojo(name = "mutateAnnotatationsTest", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "mutateAnnotationsTest", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST)
 public class XavierMojo extends AbstractMojo {
     private static final String HORIZONTAL_RULE = "-".repeat(20);
 
