@@ -26,7 +26,7 @@
             <groupId>com.spikhalskiy.futurity</groupId>
             <artifactId>futurity-core</artifactId>
             <version>0.3-RC3</version>
-        </dependency>
+        </dependency>	
         <dependency>
             <groupId>com.fteotini</groupId>
             <artifactId>mutator</artifactId>
@@ -36,16 +36,24 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
+             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/DONTRUN/**/*.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+                <artifactId>maven-surefire-plugin</artifactId>	
+                 	<version>${surefire.version}</version>
+         		<configuration>
+			<excludes>
+				<exclude>**/DONTRUN/**/*.java</exclude>
+			</excludes>
+		</configuration>
+           </plugin>
+
+<!--  
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>	
+             </plugin>
+ 
+ -->
         </plugins>
     </build>
 </project>

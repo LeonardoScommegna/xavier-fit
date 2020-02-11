@@ -40,8 +40,26 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
-    <build>
-        <testResources>
+
+<!-- 
+     <build>
+  -->    
+<!--      <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                		<version>${surefire.version}</version>
+
+
+            </plugin>
+        </plugins>
+
+ -->
+<!-- questo lavoro sotto non importa:
+	 surefire seleziona file *Test.java e simili
+	 failsafe invece *IT.java e simili	
+  -->      
+<!--          <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
                 <excludes>
@@ -49,5 +67,7 @@
                 </excludes>
             </testResource>
         </testResources>
-    </build>
-</project>
+  -->       
+<!--    </build>
+  -->
+ </project>
