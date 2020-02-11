@@ -31,7 +31,11 @@ class MinionOutputStreamHandlerTest {
     }
 
     static class DummyDTO implements Serializable {
-        final String prop;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		final String prop;
 
         DummyDTO(String prop) {
             this.prop = prop;

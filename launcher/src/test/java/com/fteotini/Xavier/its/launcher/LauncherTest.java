@@ -98,7 +98,12 @@ class LauncherTest {
     }
 
     private static class DummyMutator implements IMutator {
-        @Override
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
         public IMutationTarget getMutationDetails() {
             return null;
         }

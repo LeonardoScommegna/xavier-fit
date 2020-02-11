@@ -59,7 +59,6 @@ public class MinionProcessBuilder {
         return new ProcessArgs(javaExecutableLocation, classPath);
     }
 
-    @SuppressWarnings("WeakerAccess")
     ClassPathResolver makeClassPathResolver() {
         return new ClassPathResolver();
     }
